@@ -1,8 +1,0 @@
-{
-  "round": 1,
-  "timestamp": "2026-05-22T21:49:39.797978",
-  "success": false,
-  "kernel_code": "\"\"\"\nKernel implementation 4.\n\"\"\"\n\ndef kernel_function(*args, **kwargs):\n    \"\"\"Wrapper function that handles kernel launch.\"\"\"\n    # Mock implementation that fails\n    raise NotImplementedError('Mock kernel not implemented')\n",
-  "stdout": "Test failed: Mock kernel not implemented\n",
-  "stderr": "Traceback (most recent call last):\n  File \"/tmp/worker_3_tgjahgva/test_kernel.py\", line 49, in test_kernel\n    result = kernel_function(wait_tensor_871, arg583_1)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/worker_3_tgjahgva/kernel.py\", line 8, in kernel_function\n    raise NotImplementedError('Mock kernel not implemented')\nNotImplementedError: Mock kernel not implemented\n"
-}

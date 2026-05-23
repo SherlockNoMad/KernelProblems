@@ -1,8 +1,0 @@
-{
-  "round": 2,
-  "timestamp": "2026-05-22T21:50:12.370277",
-  "success": false,
-  "kernel_code": "view_default = torch.ops.aten.view.default(wait_tensor_871, [8, -1])\nsplit_with_sizes_default = torch.ops.aten.split_with_sizes.default(view_default, [65667072], 1)\ngetitem = split_with_sizes_default[0]\nview_dtype = torch.ops.aten.view.dtype(getitem, torch.bfloat16)\nview_default_1 = torch.ops.aten.view.default(view_dtype, [128256, 4096])\nembedding_default = torch.ops.aten.embedding.default(embedding_weight, arg583_1)",
-  "stdout": "",
-  "stderr": "Disallowed PyTorch usage detected: Low-level torch.ops.aten.* calls are not allowed; implement these ops directly in Triton kernels instead of relying on PyTorch compute"
-}
