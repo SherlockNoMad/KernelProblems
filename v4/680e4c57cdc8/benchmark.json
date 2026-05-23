@@ -3,15 +3,15 @@
   "kernelagent_triton": {
     "status": "FAIL",
     "tol_tier": "reduction",
-    "max_abs_err": 1.541259765625,
-    "max_rel_err": 0.2857142984867096,
-    "reason": "trial 0 (reduction tol): max_abs_err=1.5413e+00, max_rel_err=2.8571e-01"
+    "max_abs_err": 1.4967803955078125,
+    "max_rel_err": 55.351924896240234,
+    "reason": "trial 0 (reduction tol): max_abs_err=1.4968e+00, max_rel_err=5.5352e+01"
   },
   "torch_compile": {
-    "status": "FAIL",
+    "status": "PASS",
     "tol_tier": "reduction",
-    "max_abs_err": 1.80169677734375,
-    "max_rel_err": 46.33430862426758,
-    "reason": "trial 0 (reduction tol): max_abs_err=1.8017e+00, max_rel_err=4.6334e+01"
+    "max_abs_err": 0.0,
+    "max_rel_err": 0.0,
+    "note": "reference baseline"
   }
 }
