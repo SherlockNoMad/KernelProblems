@@ -1,6 +1,17 @@
 {
-  "status": "FAIL",
-  "reason": "trial 3 (bitwise tol): output[0] numerical mismatch (max_err=1.2500e-01)",
-  "tol_tier": "bitwise",
-  "max_err": 0.125
+  "eager_ms": null,
+  "kernelagent_triton": {
+    "status": "FAIL",
+    "tol_tier": "bitwise",
+    "max_abs_err": 0.125,
+    "max_rel_err": 0.0078125,
+    "reason": "trial 3 (bitwise tol): max_abs_err=1.2500e-01, max_rel_err=7.8125e-03"
+  },
+  "torch_compile": {
+    "status": "FAIL",
+    "tol_tier": "bitwise",
+    "max_abs_err": 0.125,
+    "max_rel_err": 0.0078125,
+    "reason": "trial 3 (bitwise tol): max_abs_err=1.2500e-01, max_rel_err=7.8125e-03"
+  }
 }

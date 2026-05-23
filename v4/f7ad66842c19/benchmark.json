@@ -1,6 +1,17 @@
 {
-  "status": "FAIL",
-  "reason": "trial 1 (reduction tol): output[1] numerical mismatch (max_err=3.7400e+02)",
-  "tol_tier": "reduction",
-  "max_err": 374.0
+  "eager_ms": null,
+  "kernelagent_triton": {
+    "status": "FAIL",
+    "tol_tier": "reduction",
+    "max_abs_err": 0.95941162109375,
+    "max_rel_err": 0.07070630043745041,
+    "reason": "trial 0 (reduction tol): max_abs_err=9.5941e-01, max_rel_err=7.0706e-02"
+  },
+  "torch_compile": {
+    "status": "FAIL",
+    "tol_tier": "reduction",
+    "max_abs_err": 1.273529052734375,
+    "max_rel_err": 854.321533203125,
+    "reason": "trial 0 (reduction tol): max_abs_err=1.2735e+00, max_rel_err=8.5432e+02"
+  }
 }
