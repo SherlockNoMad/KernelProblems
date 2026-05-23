@@ -11,7 +11,7 @@
     "status": "FAIL",
     "tol_tier": "reduction",
     "max_abs_err": 1.659759521484375,
-    "max_rel_err": 15747069952.0,
-    "reason": "trial 0 (reduction tol): max_abs_err=1.6598e+00, max_rel_err=1.5747e+10"
+    "max_rel_err": 8.511616706848145,
+    "reason": "trial 0 (reduction tol): max_abs_err=1.6598e+00, max_rel_err=8.5116e+00"
   }
 }
