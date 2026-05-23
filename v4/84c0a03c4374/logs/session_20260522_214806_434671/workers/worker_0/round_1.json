@@ -1,0 +1,8 @@
+{
+  "round": 1,
+  "timestamp": "2026-05-22T21:50:43.901629",
+  "success": false,
+  "kernel_code": "\"\"\"\nKernel implementation 1.\n\"\"\"\n\ndef kernel_function(*args, **kwargs):\n    \"\"\"Wrapper function that handles kernel launch.\"\"\"\n    # Mock implementation that fails\n    raise NotImplementedError('Mock kernel not implemented')\n",
+  "stdout": "Test failed: Mock kernel not implemented\n",
+  "stderr": ""
+}

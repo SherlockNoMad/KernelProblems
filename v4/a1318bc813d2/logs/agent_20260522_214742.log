@@ -1,0 +1,58 @@
+2026-05-22 21:50:34,765 - TritonKernelAgent - ERROR - Error generating kernels with LLM API: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'temperature: range: 0..1'}, 'request_id': 'req_011CbJu5MpMyJdJeD8UqrWPi'}
+2026-05-22 21:50:34,791 - worker_0 - INFO - Starting verification for worker 0
+2026-05-22 21:50:34,791 - worker_0 - INFO - Round 1/10
+2026-05-22 21:50:34,792 - worker_0 - INFO - Wrote kernel and 1 test file(s)
+2026-05-22 21:50:34,793 - worker_1 - INFO - Starting verification for worker 1
+2026-05-22 21:50:34,793 - worker_1 - INFO - Round 1/10
+2026-05-22 21:50:34,794 - worker_1 - INFO - Wrote kernel and 1 test file(s)
+2026-05-22 21:50:34,795 - worker_2 - INFO - Starting verification for worker 2
+2026-05-22 21:50:34,796 - worker_2 - INFO - Round 1/10
+2026-05-22 21:50:34,796 - worker_2 - INFO - Wrote kernel and 1 test file(s)
+2026-05-22 21:50:34,798 - worker_3 - INFO - Starting verification for worker 3
+2026-05-22 21:50:34,798 - worker_3 - INFO - Round 1/10
+2026-05-22 21:50:34,798 - worker_3 - INFO - Wrote kernel and 1 test file(s)
+2026-05-22 21:50:40,751 - worker_2 - ERROR - Test test_kernel.py failed. Exit code: 1, stderr: 
+2026-05-22 21:50:40,751 - worker_2 - INFO - Refining kernel using claude-sonnet-4-20250514
+2026-05-22 21:50:40,841 - worker_3 - ERROR - Test test_kernel.py failed. Exit code: 1, stderr: 
+2026-05-22 21:50:40,842 - worker_3 - INFO - Refining kernel using claude-sonnet-4-20250514
+2026-05-22 21:50:40,959 - worker_0 - ERROR - Test test_kernel.py failed. Exit code: 1, stderr: 
+2026-05-22 21:50:40,960 - worker_0 - INFO - Refining kernel using claude-sonnet-4-20250514
+2026-05-22 21:50:41,091 - worker_1 - ERROR - Test test_kernel.py failed. Exit code: 1, stderr: 
+2026-05-22 21:50:41,092 - worker_1 - INFO - Refining kernel using claude-sonnet-4-20250514
+2026-05-22 21:51:18,908 - worker_3 - INFO - Successfully refined kernel using claude-sonnet-4-20250514
+2026-05-22 21:51:18,908 - worker_3 - INFO - Round 2/10
+2026-05-22 21:51:18,909 - worker_3 - INFO - Updated kernel file
+2026-05-22 21:51:24,092 - worker_3 - ERROR - Test test_kernel.py failed. Exit code: 1, stderr: 
+2026-05-22 21:51:24,092 - worker_3 - INFO - Refining kernel using claude-sonnet-4-20250514
+2026-05-22 21:51:26,454 - worker_0 - INFO - Successfully refined kernel using claude-sonnet-4-20250514
+2026-05-22 21:51:26,454 - worker_0 - INFO - Round 2/10
+2026-05-22 21:51:26,455 - worker_0 - INFO - Updated kernel file
+2026-05-22 21:51:27,138 - worker_2 - INFO - Successfully refined kernel using claude-sonnet-4-20250514
+2026-05-22 21:51:27,138 - worker_2 - INFO - Round 2/10
+2026-05-22 21:51:27,138 - worker_2 - INFO - Updated kernel file
+2026-05-22 21:51:30,075 - worker_1 - INFO - Successfully refined kernel using claude-sonnet-4-20250514
+2026-05-22 21:51:30,076 - worker_1 - INFO - Round 2/10
+2026-05-22 21:51:30,076 - worker_1 - INFO - Updated kernel file
+2026-05-22 21:51:31,223 - worker_0 - ERROR - Test test_kernel.py failed. Exit code: 1, stderr: 
+2026-05-22 21:51:31,223 - worker_0 - INFO - Refining kernel using claude-sonnet-4-20250514
+2026-05-22 21:51:31,895 - worker_2 - ERROR - Test test_kernel.py failed. Exit code: 1, stderr: 
+2026-05-22 21:51:31,896 - worker_2 - INFO - Refining kernel using claude-sonnet-4-20250514
+2026-05-22 21:51:34,960 - worker_1 - ERROR - Test test_kernel.py failed. Exit code: 1, stderr: 
+2026-05-22 21:51:34,961 - worker_1 - INFO - Refining kernel using claude-sonnet-4-20250514
+2026-05-22 21:52:10,747 - worker_3 - INFO - Successfully refined kernel using claude-sonnet-4-20250514
+2026-05-22 21:52:10,747 - worker_3 - INFO - Round 3/10
+2026-05-22 21:52:10,748 - worker_3 - INFO - Updated kernel file
+2026-05-22 21:52:11,869 - worker_0 - INFO - Successfully refined kernel using claude-sonnet-4-20250514
+2026-05-22 21:52:11,869 - worker_0 - INFO - Round 3/10
+2026-05-22 21:52:11,869 - worker_0 - INFO - Updated kernel file
+2026-05-22 21:52:13,150 - worker_2 - INFO - Successfully refined kernel using claude-sonnet-4-20250514
+2026-05-22 21:52:13,150 - worker_2 - INFO - Round 3/10
+2026-05-22 21:52:13,151 - worker_2 - INFO - Updated kernel file
+2026-05-22 21:52:15,792 - worker_3 - ERROR - Test test_kernel.py failed. Exit code: 1, stderr: 
+2026-05-22 21:52:15,793 - worker_3 - INFO - Refining kernel using claude-sonnet-4-20250514
+2026-05-22 21:52:17,179 - worker_0 - INFO - Test test_kernel.py passed
+2026-05-22 21:52:17,180 - worker_0 - INFO - Success! Kernel passed test in round 3
+2026-05-22 21:52:18,506 - worker_2 - INFO - Test test_kernel.py passed
+2026-05-22 21:52:18,507 - worker_2 - INFO - Success! Kernel passed test in round 3
+2026-05-22 21:52:22,184 - triton_kernel_agent.manager - WARNING - Terminating worker 194109
+2026-05-22 21:52:27,189 - triton_kernel_agent.manager - WARNING - Terminating worker 194158

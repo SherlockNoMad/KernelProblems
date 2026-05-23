@@ -1,0 +1,8 @@
+{
+  "eager_ms": 0.27406496047973633,
+  "triton_ms": 0.12389023780822754,
+  "max_err": 0.0,
+  "tol_tier": "bitwise",
+  "num_trials": 5,
+  "compile_ms": 0.17273727416992188
+}
