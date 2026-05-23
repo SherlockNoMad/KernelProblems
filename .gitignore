@@ -1,4 +1,6 @@
 __pycache__/
 *.pyc
 logs/
+opt_logs/
 *.log
+problem_clean.py
