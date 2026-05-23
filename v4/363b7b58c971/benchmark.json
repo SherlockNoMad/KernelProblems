@@ -3,9 +3,9 @@
   "kernelagent_triton": {
     "status": "FAIL",
     "tol_tier": "reduction",
-    "max_abs_err": 1.54107666015625,
+    "max_abs_err": 1.54052734375,
     "max_rel_err": 0.125,
-    "reason": "trial 0 (reduction tol): max_abs_err=1.5411e+00, max_rel_err=1.2500e-01"
+    "reason": "trial 0 (reduction tol): max_abs_err=1.5405e+00, max_rel_err=1.2500e-01"
   },
   "torch_compile": {
     "status": "FAIL",

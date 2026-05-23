@@ -1,17 +1,17 @@
 {
-  "eager_ms": 2.9067974853515626,
+  "eager_ms": 2.976795959472656,
   "kernelagent_triton": {
     "status": "PASS",
     "tol_tier": "complex",
     "max_abs_err": 0.0,
     "max_rel_err": 0.0,
-    "time_ms": 1.7773532104492187
+    "time_ms": 1.8597686767578125
   },
   "torch_compile": {
     "status": "PASS",
     "tol_tier": "complex",
     "max_abs_err": 0.0,
     "max_rel_err": 0.0,
-    "time_ms": 1.6480662536621093
+    "time_ms": 1.7108271789550782
   }
 }
