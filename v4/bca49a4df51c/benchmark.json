@@ -1,5 +1,5 @@
 {
-  "eager_ms": 0.15729120254516601,
+  "eager_ms": 0.160250244140625,
   "kernelagent_triton": {
     "status": "PASS",
     "tol_tier": "bitwise",
@@ -7,7 +7,7 @@
     "max_tol_units": 0.0,
     "atol_eff": 0.08,
     "rtol": 0.001,
-    "time_ms": 0.06726304054260254
+    "time_ms": 0.07112031936645508
   },
   "kernelagent_triton_opt": {
     "status": "PASS",
@@ -16,7 +16,7 @@
     "max_tol_units": 0.0,
     "atol_eff": 0.08,
     "rtol": 0.001,
-    "time_ms": 0.06522655963897706
+    "time_ms": 0.0678265619277954
   },
   "torch_compile": {
     "status": "PASS",
@@ -24,6 +24,14 @@
     "max_abs_err": 0.0,
     "max_tol_units": 0.0,
     "note": "trusted baseline",
-    "time_ms": 0.15439616203308104
+    "time_ms": 0.16019872665405274
+  },
+  "torch_compile_max_autotune": {
+    "status": "PASS",
+    "tol_tier": "bitwise",
+    "max_abs_err": 0.0,
+    "max_tol_units": 0.0,
+    "note": "trusted baseline",
+    "time_ms": 0.21419103622436522
   }
 }
