@@ -1,8 +1,9 @@
 {
-  "eager_ms": 0.3667331314086914,
-  "triton_ms": 0.2131622314453125,
+  "status": "PASS",
+  "eager_ms": 0.3751510238647461,
+  "triton_ms": 0.21536672592163086,
   "max_err": 0.015625,
   "tol_tier": "reduction",
   "num_trials": 5,
-  "compile_ms": 0.17983360290527345
+  "compile_ms": 0.17876287460327148
 }

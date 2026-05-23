@@ -1,0 +1,6 @@
+{
+  "status": "FAIL",
+  "reason": "trial 1 (reduction tol): output[1] numerical mismatch (max_err=3.7400e+02)",
+  "tol_tier": "reduction",
+  "max_err": 374.0
+}

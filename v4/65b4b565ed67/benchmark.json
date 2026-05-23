@@ -1,0 +1,6 @@
+{
+  "status": "FAIL",
+  "reason": "trial 3 (bitwise tol): numerical mismatch (max_err=1.2500e-01)",
+  "tol_tier": "bitwise",
+  "max_err": 0.125
+}
