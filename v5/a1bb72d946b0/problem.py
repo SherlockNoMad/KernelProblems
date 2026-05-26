@@ -26,25 +26,25 @@ class Model(torch.nn.Module):
         _to_copy_default: "f32[1, 8192, 32, 128][33554432, 4096, 128, 1]cuda:0" = torch.ops.aten._to_copy.default(transpose_int, dtype = torch.float32, layout = torch.strided, device = device(type='cuda', index=0));  transpose_int = None
 
         # Annotation: {'module_fqn': 'layers.0.attention', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/torchtitan/torchtitan/models/common/attention.py:657 in forward, code: xq, xk = apply_rotary_emb_complex(
-        reshape_default: "f32[1, 8192, 32, 64, 2][33554432, 4096, 128, 2, 1]cuda:0" = torch.ops.aten.reshape.default(_to_copy_default, [1, 8192, 32, 64, 2]);  _to_copy_default = None
-        view_as_complex_default: "c64[1, 8192, 32, 64][16777216, 2048, 64, 1]cuda:0" = torch.ops.aten.view_as_complex.default(reshape_default);  reshape_default = None
+        view_default: "f32[1, 8192, 32, 64, 2][33554432, 4096, 128, 2, 1]cuda:0" = torch.ops.aten.view.default(_to_copy_default, [1, 8192, 32, 64, 2]);  _to_copy_default = None
+        view_as_complex_default: "c64[1, 8192, 32, 64][16777216, 2048, 64, 1]cuda:0" = torch.ops.aten.view_as_complex.default(view_default);  view_default = None
 
         # Annotation: {'module_fqn': 'layers.0.attention', 'fusion_class': 'pointwise', 'is_fusible': True} File: /data/users/bahuang/torchtitan/torchtitan/models/common/attention.py:657 in forward, code: xq, xk = apply_rotary_emb_complex(
         mul_tensor: "c64[1, 8192, 32, 64][16777216, 2048, 64, 1]cuda:0" = torch.ops.aten.mul.Tensor(view_as_complex_default, clone_default_1);  view_as_complex_default = clone_default_1 = None
 
         # Annotation: {'module_fqn': 'layers.0.attention', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/torchtitan/torchtitan/models/common/attention.py:657 in forward, code: xq, xk = apply_rotary_emb_complex(
         view_as_real_default: "f32[1, 8192, 32, 64, 2][33554432, 4096, 128, 2, 1]cuda:0" = torch.ops.aten.view_as_real.default(mul_tensor);  mul_tensor = None
-        reshape_default_1: "f32[1, 8192, 32, 128][33554432, 4096, 128, 1]cuda:0" = torch.ops.aten.reshape.default(view_as_real_default, [1, 8192, 32, 128]);  view_as_real_default = None
+        view_default_1: "f32[1, 8192, 32, 128][33554432, 4096, 128, 1]cuda:0" = torch.ops.aten.view.default(view_as_real_default, [1, 8192, 32, 128]);  view_as_real_default = None
 
         # Annotation: {'module_fqn': 'layers.0.attention', 'fusion_class': 'pointwise', 'is_fusible': True} File: /data/users/bahuang/torchtitan/torchtitan/models/common/attention.py:657 in forward, code: xq, xk = apply_rotary_emb_complex(
-        _to_copy_default_1: "bf16[1, 8192, 32, 128][33554432, 4096, 128, 1]cuda:0" = torch.ops.aten._to_copy.default(reshape_default_1, dtype = torch.bfloat16, layout = torch.strided, device = device(type='cuda', index=0));  reshape_default_1 = None
+        _to_copy_default_1: "bf16[1, 8192, 32, 128][33554432, 4096, 128, 1]cuda:0" = torch.ops.aten._to_copy.default(view_default_1, dtype = torch.bfloat16, layout = torch.strided, device = device(type='cuda', index=0));  view_default_1 = None
 
         # Annotation: {'module_fqn': 'layers.0.attention.qkv_linear', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/torchtitan/torchtitan/models/common/attention.py:533 in forward, code: xq = xq.view(bs, seqlen, -1, self.head_dim)
-        reshape_default_2: "bf16[1, 8192, 4096][33554432, 4096, 1]cuda:0" = torch.ops.aten.reshape.default(_to_copy_default_1, [1, 8192, 4096]);  _to_copy_default_1 = None
+        view_default_2: "bf16[1, 8192, 4096][33554432, 4096, 1]cuda:0" = torch.ops.aten.view.default(_to_copy_default_1, [1, 8192, 4096]);  _to_copy_default_1 = None
 
         # Annotation: {'module_fqn': 'layers.0.attention.qkv_linear.wq', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
-        reshape_default_3: "bf16[8192, 4096][4096, 1]cuda:0" = torch.ops.aten.reshape.default(reshape_default_2, [8192, 4096]);  reshape_default_2 = None
-        t_default: "bf16[4096, 8192][1, 4096]cuda:0" = torch.ops.aten.t.default(reshape_default_3);  reshape_default_3 = None
+        view_default_3: "bf16[8192, 4096][4096, 1]cuda:0" = torch.ops.aten.view.default(view_default_2, [8192, 4096]);  view_default_2 = None
+        t_default: "bf16[4096, 8192][1, 4096]cuda:0" = torch.ops.aten.t.default(view_default_3);  view_default_3 = None
 
         # Annotation: {'module_fqn': 'layers.0.attention.inner_attention', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/torchtitan/torchtitan/models/common/attention.py:293 in forward, code: q, k, v = q.transpose(1, 2), k.transpose(1, 2), v.transpose(1, 2)
         transpose_int_1: "bf16[1, 8192, 8, 128][8388608, 1024, 128, 1]cuda:0" = torch.ops.aten.transpose.int(getitem_642, 1, 2);  getitem_642 = None
@@ -53,35 +53,35 @@ class Model(torch.nn.Module):
         _to_copy_default_2: "f32[1, 8192, 8, 128][8388608, 1024, 128, 1]cuda:0" = torch.ops.aten._to_copy.default(transpose_int_1, dtype = torch.float32, layout = torch.strided, device = device(type='cuda', index=0));  transpose_int_1 = None
 
         # Annotation: {'module_fqn': 'layers.0.attention', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/torchtitan/torchtitan/models/common/attention.py:657 in forward, code: xq, xk = apply_rotary_emb_complex(
-        reshape_default_4: "f32[1, 8192, 8, 64, 2][8388608, 1024, 128, 2, 1]cuda:0" = torch.ops.aten.reshape.default(_to_copy_default_2, [1, 8192, 8, 64, 2]);  _to_copy_default_2 = None
-        view_as_complex_default_1: "c64[1, 8192, 8, 64][4194304, 512, 64, 1]cuda:0" = torch.ops.aten.view_as_complex.default(reshape_default_4);  reshape_default_4 = None
+        view_default_4: "f32[1, 8192, 8, 64, 2][8388608, 1024, 128, 2, 1]cuda:0" = torch.ops.aten.view.default(_to_copy_default_2, [1, 8192, 8, 64, 2]);  _to_copy_default_2 = None
+        view_as_complex_default_1: "c64[1, 8192, 8, 64][4194304, 512, 64, 1]cuda:0" = torch.ops.aten.view_as_complex.default(view_default_4);  view_default_4 = None
 
         # Annotation: {'module_fqn': 'layers.0.attention', 'fusion_class': 'pointwise', 'is_fusible': True} File: /data/users/bahuang/torchtitan/torchtitan/models/common/attention.py:657 in forward, code: xq, xk = apply_rotary_emb_complex(
         mul_tensor_1: "c64[1, 8192, 8, 64][4194304, 512, 64, 1]cuda:0" = torch.ops.aten.mul.Tensor(view_as_complex_default_1, clone_default);  view_as_complex_default_1 = clone_default = None
 
         # Annotation: {'module_fqn': 'layers.0.attention', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/torchtitan/torchtitan/models/common/attention.py:657 in forward, code: xq, xk = apply_rotary_emb_complex(
         view_as_real_default_1: "f32[1, 8192, 8, 64, 2][8388608, 1024, 128, 2, 1]cuda:0" = torch.ops.aten.view_as_real.default(mul_tensor_1);  mul_tensor_1 = None
-        reshape_default_5: "f32[1, 8192, 8, 128][8388608, 1024, 128, 1]cuda:0" = torch.ops.aten.reshape.default(view_as_real_default_1, [1, 8192, 8, 128]);  view_as_real_default_1 = None
+        view_default_5: "f32[1, 8192, 8, 128][8388608, 1024, 128, 1]cuda:0" = torch.ops.aten.view.default(view_as_real_default_1, [1, 8192, 8, 128]);  view_as_real_default_1 = None
 
         # Annotation: {'module_fqn': 'layers.0.attention', 'fusion_class': 'pointwise', 'is_fusible': True} File: /data/users/bahuang/torchtitan/torchtitan/models/common/attention.py:657 in forward, code: xq, xk = apply_rotary_emb_complex(
-        _to_copy_default_3: "bf16[1, 8192, 8, 128][8388608, 1024, 128, 1]cuda:0" = torch.ops.aten._to_copy.default(reshape_default_5, dtype = torch.bfloat16, layout = torch.strided, device = device(type='cuda', index=0));  reshape_default_5 = None
+        _to_copy_default_3: "bf16[1, 8192, 8, 128][8388608, 1024, 128, 1]cuda:0" = torch.ops.aten._to_copy.default(view_default_5, dtype = torch.bfloat16, layout = torch.strided, device = device(type='cuda', index=0));  view_default_5 = None
 
         # Annotation: {'module_fqn': 'layers.0.attention.qkv_linear', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/torchtitan/torchtitan/models/common/attention.py:534 in forward, code: xk = xk.view(bs, seqlen, -1, self.head_dim)
-        reshape_default_6: "bf16[1, 8192, 1024][8388608, 1024, 1]cuda:0" = torch.ops.aten.reshape.default(_to_copy_default_3, [1, 8192, 1024]);  _to_copy_default_3 = None
+        view_default_6: "bf16[1, 8192, 1024][8388608, 1024, 1]cuda:0" = torch.ops.aten.view.default(_to_copy_default_3, [1, 8192, 1024]);  _to_copy_default_3 = None
 
         # Annotation: {'module_fqn': 'layers.0.attention.qkv_linear.wk', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
-        reshape_default_7: "bf16[8192, 1024][1024, 1]cuda:0" = torch.ops.aten.reshape.default(reshape_default_6, [8192, 1024]);  reshape_default_6 = None
-        t_default_1: "bf16[1024, 8192][1, 1024]cuda:0" = torch.ops.aten.t.default(reshape_default_7);  reshape_default_7 = None
+        view_default_7: "bf16[8192, 1024][1024, 1]cuda:0" = torch.ops.aten.view.default(view_default_6, [8192, 1024]);  view_default_6 = None
+        t_default_1: "bf16[1024, 8192][1, 1024]cuda:0" = torch.ops.aten.t.default(view_default_7);  view_default_7 = None
 
         # Annotation: {'module_fqn': 'layers.0.attention.inner_attention', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/torchtitan/torchtitan/models/common/attention.py:293 in forward, code: q, k, v = q.transpose(1, 2), k.transpose(1, 2), v.transpose(1, 2)
         transpose_int_2: "bf16[1, 8192, 8, 128][8388608, 1024, 128, 1]cuda:0" = torch.ops.aten.transpose.int(getitem_643, 1, 2);  getitem_643 = None
 
         # Annotation: {'module_fqn': 'layers.0.attention.qkv_linear', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/torchtitan/torchtitan/models/common/attention.py:535 in forward, code: xv = xv.view(bs, seqlen, -1, self.head_dim)
-        reshape_default_8: "bf16[1, 8192, 1024][8388608, 1024, 1]cuda:0" = torch.ops.aten.reshape.default(transpose_int_2, [1, 8192, 1024]);  transpose_int_2 = None
+        view_default_8: "bf16[1, 8192, 1024][8388608, 1024, 1]cuda:0" = torch.ops.aten.view.default(transpose_int_2, [1, 8192, 1024]);  transpose_int_2 = None
 
         # Annotation: {'module_fqn': 'layers.0.attention.qkv_linear.wv', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
-        reshape_default_9: "bf16[8192, 1024][1024, 1]cuda:0" = torch.ops.aten.reshape.default(reshape_default_8, [8192, 1024]);  reshape_default_8 = None
-        t_default_2: "bf16[1024, 8192][1, 1024]cuda:0" = torch.ops.aten.t.default(reshape_default_9);  reshape_default_9 = None
+        view_default_9: "bf16[8192, 1024][1024, 1]cuda:0" = torch.ops.aten.view.default(view_default_8, [8192, 1024]);  view_default_8 = None
+        t_default_2: "bf16[1024, 8192][1, 1024]cuda:0" = torch.ops.aten.t.default(view_default_9);  view_default_9 = None
         return (t_default, t_default_1, t_default_2)
 
 

@@ -32,31 +32,31 @@ class Model(torch.nn.Module):
         getitem: "bf16[1, 8192, 4096][33554432, 4096, 1]cuda:0" = _fused_rms_norm_default[0]
 
         # Annotation: {'module_fqn': 'layers.1.attention.qkv_linear.wv', 'fusion_class': 'view', 'is_fusible': True} recompute: PREFER_RECOMPUTE File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
-        reshape_default: "bf16[8192, 4096][4096, 1]cuda:0" = torch.ops.aten.reshape.default(getitem, [8192, 4096])
+        view_default: "bf16[8192, 4096][4096, 1]cuda:0" = torch.ops.aten.view.default(getitem, [8192, 4096])
 
         # Annotation: {'module_fqn': 'layers.1.attention.qkv_linear.wk', 'fusion_class': 'view', 'is_fusible': True} recompute: PREFER_RECOMPUTE File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
-        reshape_default_1: "bf16[8192, 4096][4096, 1]cuda:0" = torch.ops.aten.reshape.default(getitem, [8192, 4096])
+        view_default_1: "bf16[8192, 4096][4096, 1]cuda:0" = torch.ops.aten.view.default(getitem, [8192, 4096])
 
         # Annotation: {'module_fqn': 'layers.1.attention.qkv_linear.wq', 'fusion_class': 'view', 'is_fusible': True} recompute: PREFER_RECOMPUTE File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
-        reshape_default_2: "bf16[8192, 4096][4096, 1]cuda:0" = torch.ops.aten.reshape.default(getitem, [8192, 4096]);  getitem = None
+        view_default_2: "bf16[8192, 4096][4096, 1]cuda:0" = torch.ops.aten.view.default(getitem, [8192, 4096]);  getitem = None
 
         # Annotation: {'module_fqn': 'layers.1.attention_norm', 'fusion_class': 'view', 'is_fusible': True} recompute: PREFER_RECOMPUTE File: /data/users/bahuang/pytorch/torch/nn/modules/normalization.py:427 in forward, code: return F.rms_norm(x, self.normalized_shape, self.weight, self.eps)
         getitem_819: "f32[1, 8192, 1][8192, 1, 1]cuda:0" = _fused_rms_norm_default[1];  _fused_rms_norm_default = None
 
         # Annotation: {'module_fqn': 'layers.1.attention.qkv_linear.wv', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
-        reshape_default_3: "bf16[1, 8192, 4096][33554432, 4096, 1]cuda:0" = torch.ops.aten.reshape.default(mm_656, [1, 8192, 4096]);  mm_656 = None
+        view_default_3: "bf16[1, 8192, 4096][33554432, 4096, 1]cuda:0" = torch.ops.aten.view.default(mm_656, [1, 8192, 4096]);  mm_656 = None
 
         # Annotation: {'module_fqn': 'layers.1.attention.qkv_linear.wk', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
-        reshape_default_4: "bf16[1, 8192, 4096][33554432, 4096, 1]cuda:0" = torch.ops.aten.reshape.default(mm_658, [1, 8192, 4096]);  mm_658 = None
+        view_default_4: "bf16[1, 8192, 4096][33554432, 4096, 1]cuda:0" = torch.ops.aten.view.default(mm_658, [1, 8192, 4096]);  mm_658 = None
 
         # Annotation: {'fusion_class': 'pointwise', 'is_fusible': True} No stacktrace found for following nodes
-        add_tensor: "bf16[1, 8192, 4096][33554432, 4096, 1]cuda:0" = torch.ops.aten.add.Tensor(reshape_default_3, reshape_default_4);  reshape_default_3 = reshape_default_4 = None
+        add_tensor: "bf16[1, 8192, 4096][33554432, 4096, 1]cuda:0" = torch.ops.aten.add.Tensor(view_default_3, view_default_4);  view_default_3 = view_default_4 = None
 
         # Annotation: {'module_fqn': 'layers.1.attention.qkv_linear.wq', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
-        reshape_default_5: "bf16[1, 8192, 4096][33554432, 4096, 1]cuda:0" = torch.ops.aten.reshape.default(mm_660, [1, 8192, 4096]);  mm_660 = None
+        view_default_5: "bf16[1, 8192, 4096][33554432, 4096, 1]cuda:0" = torch.ops.aten.view.default(mm_660, [1, 8192, 4096]);  mm_660 = None
 
         # Annotation: {'fusion_class': 'pointwise', 'is_fusible': True} No stacktrace found for following nodes
-        add_tensor_1: "bf16[1, 8192, 4096][33554432, 4096, 1]cuda:0" = torch.ops.aten.add.Tensor(add_tensor, reshape_default_5);  add_tensor = reshape_default_5 = None
+        add_tensor_1: "bf16[1, 8192, 4096][33554432, 4096, 1]cuda:0" = torch.ops.aten.add.Tensor(add_tensor, view_default_5);  add_tensor = view_default_5 = None
 
         # Annotation: {'module_fqn': 'layers.1.attention_norm', 'fusion_class': 'decomposable', 'is_fusible': True} File: /data/users/bahuang/pytorch/torch/nn/modules/normalization.py:427 in forward, code: return F.rms_norm(x, self.normalized_shape, self.weight, self.eps)
         _fused_rms_norm_backward_default = torch.ops.aten._fused_rms_norm_backward.default(add_tensor_1, add_1, [4096], getitem_819, _unsafe_view_default, [True, True]);  add_tensor_1 = add_1 = getitem_819 = _unsafe_view_default = None
@@ -72,7 +72,7 @@ class Model(torch.nn.Module):
 
         # Annotation: {'module_fqn': 'layers.1.attention_norm', 'fusion_class': 'pointwise', 'is_fusible': True} File: /data/users/bahuang/pytorch/torch/distributed/tensor/_redistribute.py:1865 in forward, code: local_tensor = input._local_tensor.to(dtype=op_dtype)
         _to_copy_default: "f32[4096][1]cuda:0" = torch.ops.aten._to_copy.default(getitem_821, dtype = torch.float32);  getitem_821 = None
-        return (reshape_default, reshape_default_1, reshape_default_2, add_tensor_2, _to_copy_default)
+        return (view_default, view_default_1, view_default_2, add_tensor_2, _to_copy_default)
 
 
 def get_inputs():

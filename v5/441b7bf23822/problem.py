@@ -14,38 +14,38 @@ class Model(torch.nn.Module):
         mm_662: "bf16[8192, 14336][14336, 1]cuda:0",
     ):
         # Annotation: {'module_fqn': 'layers.0.feed_forward.w1', 'fusion_class': 'view', 'is_fusible': True} recompute: PREFER_RECOMPUTE File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
-        reshape_default: "bf16[1, 8192, 14336][117440512, 14336, 1]cuda:0" = torch.ops.aten.reshape.default(mm_4, [1, 8192, 14336]);  mm_4 = None
+        _unsafe_view_default: "bf16[1, 8192, 14336][117440512, 14336, 1]cuda:0" = torch.ops.aten._unsafe_view.default(mm_4, [1, 8192, 14336]);  mm_4 = None
 
         # Annotation: {'module_fqn': 'layers.0.feed_forward', 'fusion_class': 'pointwise', 'is_fusible': True} recompute: PREFER_RECOMPUTE File: /data/users/bahuang/torchtitan/torchtitan/models/common/feed_forward.py:54 in forward, code: return self.w2(F.silu(self.w1(x)) * self.w3(x))
-        silu_default: "bf16[1, 8192, 14336][117440512, 14336, 1]cuda:0" = torch.ops.aten.silu.default(reshape_default)
+        silu_default: "bf16[1, 8192, 14336][117440512, 14336, 1]cuda:0" = torch.ops.aten.silu.default(_unsafe_view_default)
 
         # Annotation: {'module_fqn': 'layers.0.feed_forward.w3', 'fusion_class': 'view', 'is_fusible': True} recompute: PREFER_RECOMPUTE File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
-        reshape_default_1: "bf16[1, 8192, 14336][117440512, 14336, 1]cuda:0" = torch.ops.aten.reshape.default(mm_5, [1, 8192, 14336]);  mm_5 = None
+        _unsafe_view_default_1: "bf16[1, 8192, 14336][117440512, 14336, 1]cuda:0" = torch.ops.aten._unsafe_view.default(mm_5, [1, 8192, 14336]);  mm_5 = None
 
         # Annotation: {'module_fqn': 'layers.0.feed_forward', 'fusion_class': 'pointwise', 'is_fusible': True} recompute: PREFER_RECOMPUTE File: /data/users/bahuang/torchtitan/torchtitan/models/common/feed_forward.py:54 in forward, code: return self.w2(F.silu(self.w1(x)) * self.w3(x))
-        mul_tensor: "bf16[1, 8192, 14336][117440512, 14336, 1]cuda:0" = torch.ops.aten.mul.Tensor(silu_default, reshape_default_1)
+        mul_tensor: "bf16[1, 8192, 14336][117440512, 14336, 1]cuda:0" = torch.ops.aten.mul.Tensor(silu_default, _unsafe_view_default_1)
 
         # Annotation: {'module_fqn': 'layers.0.feed_forward.w2', 'fusion_class': 'view', 'is_fusible': True} recompute: PREFER_RECOMPUTE File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
-        reshape_default_2: "bf16[8192, 14336][14336, 1]cuda:0" = torch.ops.aten.reshape.default(mul_tensor, [8192, 14336]);  mul_tensor = None
+        view_default: "bf16[8192, 14336][14336, 1]cuda:0" = torch.ops.aten.view.default(mul_tensor, [8192, 14336]);  mul_tensor = None
 
         # Annotation: {'module_fqn': 'layers.0.feed_forward.w2', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
-        reshape_default_3: "bf16[1, 8192, 14336][117440512, 14336, 1]cuda:0" = torch.ops.aten.reshape.default(mm_662, [1, 8192, 14336]);  mm_662 = None
+        view_default_1: "bf16[1, 8192, 14336][117440512, 14336, 1]cuda:0" = torch.ops.aten.view.default(mm_662, [1, 8192, 14336]);  mm_662 = None
 
         # Annotation: {'module_fqn': 'layers.0.feed_forward', 'fusion_class': 'pointwise', 'is_fusible': True} File: /data/users/bahuang/torchtitan/torchtitan/models/common/feed_forward.py:54 in forward, code: return self.w2(F.silu(self.w1(x)) * self.w3(x))
-        mul_tensor_1: "bf16[1, 8192, 14336][117440512, 14336, 1]cuda:0" = torch.ops.aten.mul.Tensor(reshape_default_3, silu_default);  silu_default = None
+        mul_tensor_1: "bf16[1, 8192, 14336][117440512, 14336, 1]cuda:0" = torch.ops.aten.mul.Tensor(view_default_1, silu_default);  silu_default = None
 
         # Annotation: {'module_fqn': 'layers.0.feed_forward.w3', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
-        reshape_default_4: "bf16[8192, 14336][14336, 1]cuda:0" = torch.ops.aten.reshape.default(mul_tensor_1, [8192, 14336]);  mul_tensor_1 = None
-        t_default: "bf16[14336, 8192][1, 14336]cuda:0" = torch.ops.aten.t.default(reshape_default_4);  reshape_default_4 = None
+        view_default_2: "bf16[8192, 14336][14336, 1]cuda:0" = torch.ops.aten.view.default(mul_tensor_1, [8192, 14336]);  mul_tensor_1 = None
+        t_default: "bf16[14336, 8192][1, 14336]cuda:0" = torch.ops.aten.t.default(view_default_2);  view_default_2 = None
 
         # Annotation: {'module_fqn': 'layers.0.feed_forward', 'fusion_class': 'pointwise', 'is_fusible': True} File: /data/users/bahuang/torchtitan/torchtitan/models/common/feed_forward.py:54 in forward, code: return self.w2(F.silu(self.w1(x)) * self.w3(x))
-        mul_tensor_2: "bf16[1, 8192, 14336][117440512, 14336, 1]cuda:0" = torch.ops.aten.mul.Tensor(reshape_default_3, reshape_default_1);  reshape_default_3 = reshape_default_1 = None
-        silu_backward_default: "bf16[1, 8192, 14336][117440512, 14336, 1]cuda:0" = torch.ops.aten.silu_backward.default(mul_tensor_2, reshape_default);  mul_tensor_2 = reshape_default = None
+        mul_tensor_2: "bf16[1, 8192, 14336][117440512, 14336, 1]cuda:0" = torch.ops.aten.mul.Tensor(view_default_1, _unsafe_view_default_1);  view_default_1 = _unsafe_view_default_1 = None
+        silu_backward_default: "bf16[1, 8192, 14336][117440512, 14336, 1]cuda:0" = torch.ops.aten.silu_backward.default(mul_tensor_2, _unsafe_view_default);  mul_tensor_2 = _unsafe_view_default = None
 
         # Annotation: {'module_fqn': 'layers.0.feed_forward.w1', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
-        reshape_default_5: "bf16[8192, 14336][14336, 1]cuda:0" = torch.ops.aten.reshape.default(silu_backward_default, [8192, 14336]);  silu_backward_default = None
-        t_default_1: "bf16[14336, 8192][1, 14336]cuda:0" = torch.ops.aten.t.default(reshape_default_5);  reshape_default_5 = None
-        return (reshape_default_2, t_default, t_default_1)
+        view_default_3: "bf16[8192, 14336][14336, 1]cuda:0" = torch.ops.aten.view.default(silu_backward_default, [8192, 14336]);  silu_backward_default = None
+        t_default_1: "bf16[14336, 8192][1, 14336]cuda:0" = torch.ops.aten.t.default(view_default_3);  view_default_3 = None
+        return (view_default, t_default, t_default_1)
 
 
 def get_inputs():

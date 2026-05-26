@@ -31,10 +31,10 @@ class Model(torch.nn.Module):
         getitem: "bf16[1, 8192, 4096][33554432, 4096, 1]cuda:0" = _fused_rms_norm_default[0];  _fused_rms_norm_default = None
 
         # Annotation: {'module_fqn': 'layers.31.feed_forward.w1', 'fusion_class': 'view', 'is_fusible': True} recompute: PREFER_RECOMPUTE File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
-        reshape_default: "bf16[8192, 4096][4096, 1]cuda:0" = torch.ops.aten.reshape.default(getitem, [8192, 4096])
+        view_default: "bf16[8192, 4096][4096, 1]cuda:0" = torch.ops.aten.view.default(getitem, [8192, 4096])
 
         # Annotation: {'module_fqn': 'layers.31.feed_forward.w3', 'fusion_class': 'view', 'is_fusible': True} recompute: PREFER_RECOMPUTE File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
-        reshape_default_1: "bf16[8192, 4096][4096, 1]cuda:0" = torch.ops.aten.reshape.default(getitem, [8192, 4096]);  getitem = None
+        view_default_1: "bf16[8192, 4096][4096, 1]cuda:0" = torch.ops.aten.view.default(getitem, [8192, 4096]);  getitem = None
 
         # Annotation: {'module_fqn': 'layers.31.attention_norm', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/pytorch/torch/distributed/tensor/_redistribute.py:1887 in forward, code: output = redistribute_local_tensor(
         view_dtype_1: "bf16[8, 7340032][27264000, 1]cuda:0" = torch.ops.aten.view.dtype(getitem_1620, torch.bfloat16);  getitem_1620 = None
@@ -71,7 +71,7 @@ class Model(torch.nn.Module):
 
         # Annotation: {'module_fqn': 'layers.31.feed_forward.w2', 'fusion_class': 'view', 'is_fusible': True} recompute: PREFER_RECOMPUTE File: /data/users/bahuang/pytorch/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
         t_default_2: "bf16[14336, 4096][1, 14336]cuda:0" = torch.ops.aten.t.default(_unsafe_view_default_3);  _unsafe_view_default_3 = None
-        return (reshape_default, reshape_default_1, t_default, t_default_1, t_default_2)
+        return (view_default, view_default_1, t_default, t_default_1, t_default_2)
 
 
 def get_inputs():
