@@ -37,7 +37,7 @@
 
 ![Optimization trajectory](perf_trajectory.png)
 
-Blue line: triton_opt kernel time across NCU optimization rounds. Red dashed: eager baseline. Green dashed: torch.compile baseline.
+Left: per-problem optimization curves (best time / initial time, lower = better). Right: aggregate mean/median with IQR across 13 problems. Mean improves from 0.755 → 0.594 (40.6% reduction), median from 0.867 → 0.586 (41.4%).
 
 **Key findings:**
 
