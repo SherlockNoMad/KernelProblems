@@ -33,6 +33,12 @@
 | compile | 2.28x | 1.28x – 7.73x | 13 |
 | compile_ma | 1.15x | 0.31x – 4.72x | 13 |
 
+## Optimization trajectory
+
+![Optimization trajectory](perf_trajectory.png)
+
+Blue line: triton_opt kernel time across NCU optimization rounds. Red dashed: eager baseline. Green dashed: torch.compile baseline.
+
 **Key findings:**
 
 - **triton_opt** (NCU-optimized, Opus 4.7) delivers the highest geomean speedup (2.67x)
