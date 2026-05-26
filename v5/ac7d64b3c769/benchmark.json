@@ -1,0 +1,37 @@
+{
+  "eager_ms": 0.6370588684082031,
+  "kernelagent_triton": {
+    "status": "PASS",
+    "tol_tier": "reduction",
+    "max_abs_err": 0.5,
+    "max_tol_units": 0.2434832900762558,
+    "atol_eff": 1.273529052734375,
+    "rtol": 0.01,
+    "time_ms": 1.075979232788086
+  },
+  "kernelagent_triton_opt": {
+    "status": "PASS",
+    "tol_tier": "reduction",
+    "max_abs_err": 0.997222900390625,
+    "max_tol_units": 0.2521984875202179,
+    "atol_eff": 1.273529052734375,
+    "rtol": 0.01,
+    "time_ms": 0.22558624267578126
+  },
+  "torch_compile": {
+    "status": "PASS",
+    "tol_tier": "reduction",
+    "max_abs_err": 1.273529052734375,
+    "max_tol_units": 7.992302417755127,
+    "note": "trusted baseline",
+    "time_ms": 0.23278688430786132
+  },
+  "torch_compile_max_autotune": {
+    "status": "PASS",
+    "tol_tier": "reduction",
+    "max_abs_err": 1.27349853515625,
+    "max_tol_units": 7.992743492126465,
+    "note": "trusted baseline",
+    "time_ms": 0.4813123321533203
+  }
+}
