@@ -12,14 +12,14 @@ class Model(torch.nn.Module):
         wait_tensor_871: "bf16[525336576][1]cuda:0",
         arg583_1: "i64[1, 8192][8192, 1]cuda:0",
     ):
-        # Annotation: {'module_fqn': 'tok_embeddings', 'fusion_class': 'view', 'is_fusible': True} File: /data/users/bahuang/pytorch/torch/distributed/tensor/_redistribute.py:1887 in forward, code: output = redistribute_local_tensor(
+        # Annotation: {'module_fqn': 'tok_embeddings', 'fusion_class': 'view', 'is_fusible': True, 'partition_id': 1222} File: /data/users/bahuang/pytorch/torch/distributed/tensor/_redistribute.py:1887 in forward, code: output = redistribute_local_tensor(
         view_default: "bf16[8, 65667072][65667072, 1]cuda:0" = torch.ops.aten.view.default(wait_tensor_871, [8, -1]);  wait_tensor_871 = None
         split_with_sizes_default = torch.ops.aten.split_with_sizes.default(view_default, [65667072], 1);  view_default = None
         getitem: "bf16[8, 65667072][65667072, 1]cuda:0" = split_with_sizes_default[0];  split_with_sizes_default = None
         view_dtype: "bf16[8, 65667072][65667072, 1]cuda:0" = torch.ops.aten.view.dtype(getitem, torch.bfloat16);  getitem = None
         view_default_1: "bf16[128256, 4096][4096, 1]cuda:0" = torch.ops.aten.view.default(view_dtype, [128256, 4096]);  view_dtype = None
 
-        # Annotation: {'module_fqn': 'tok_embeddings', 'fusion_class': 'pointwise', 'is_fusible': True} recompute: MUST_SAVE File: /data/users/bahuang/pytorch/torch/nn/modules/sparse.py:189 in forward, code: return F.embedding(
+        # Annotation: {'module_fqn': 'tok_embeddings', 'fusion_class': 'pointwise', 'is_fusible': True, 'partition_id': 1222} recompute: MUST_SAVE File: /data/users/bahuang/pytorch/torch/nn/modules/sparse.py:189 in forward, code: return F.embedding(
         embedding_default: "bf16[1, 8192, 4096][33554432, 4096, 1]cuda:0" = torch.ops.aten.embedding.default(view_default_1, arg583_1);  view_default_1 = arg583_1 = None
         return embedding_default
 

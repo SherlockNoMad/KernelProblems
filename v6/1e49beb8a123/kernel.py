@@ -1,79 +1,126 @@
+"""
+Fused embedding lookup kernel implementation.
+This kernel fuses view operations with embedding lookup to minimize memory traffic.
+"""
+
 import torch
 import triton
 import triton.language as tl
 
 
+@triton.autotune(
+    configs=[
+        triton.Config({'BLOCK_SIZE': 64}, num_warps=2),
+        triton.Config({'BLOCK_SIZE': 128}, num_warps=4),
+        triton.Config({'BLOCK_SIZE': 256}, num_warps=4),
+        triton.Config({'BLOCK_SIZE': 512}, num_warps=8),
+    ],
+    key=['seq_len', 'embed_dim'],
+)
 @triton.jit
-def _embedding_kernel(
-    weight_ptr,  # bf16 view of wait_tensor_871 first portion, shape [V, H]
-    idx_ptr,     # int64 indices, shape [N]
-    out_ptr,     # bf16 output, shape [N, H]
-    N,           # number of indices
-    H: tl.constexpr,  # embedding dim (4096)
-    BLOCK_H: tl.constexpr,
+def fused_embedding_kernel(
+    # Input tensors
+    input_ptr,          # wait_tensor_871: source data for embedding table
+    indices_ptr,        # arg583_1: embedding indices 
+    output_ptr,         # output tensor
+    # Tensor dimensions
+    batch_size,         # batch dimension
+    seq_len,           # sequence length 
+    embed_dim,         # embedding dimension
+    vocab_size,        # vocabulary size
+    # Block size
+    BLOCK_SIZE: tl.constexpr,
 ):
-    pid_n = tl.program_id(0)
-    pid_h = tl.program_id(1)
-
-    if pid_n >= N:
-        return
-
-    idx = tl.load(idx_ptr + pid_n)
-    offs_h = pid_h * BLOCK_H + tl.arange(0, BLOCK_H)
-    mask_h = offs_h < H
-
-    w = tl.load(weight_ptr + idx * H + offs_h, mask=mask_h, other=0.0)
-    tl.store(out_ptr + pid_n * H + offs_h, w, mask=mask_h)
+    # Get program indices
+    batch_idx = tl.program_id(0)
+    seq_idx = tl.program_id(1)
+    dim_block_idx = tl.program_id(2)
+    
+    # Calculate dimension offsets for this block
+    dim_start = dim_block_idx * BLOCK_SIZE
+    dim_offsets = dim_start + tl.arange(0, BLOCK_SIZE)
+    dim_mask = dim_offsets < embed_dim
+    
+    # Load the embedding index for this batch and sequence position
+    indices_offset = batch_idx * seq_len + seq_idx
+    embedding_idx = tl.load(indices_ptr + indices_offset)
+    
+    # Calculate input offsets for the embedding table
+    # The embedding table starts from the input tensor after view/split operations
+    embedding_row_start = embedding_idx * embed_dim
+    input_offsets = embedding_row_start + dim_offsets
+    input_mask = (embedding_idx < vocab_size) & dim_mask
+    
+    # Load embedding values
+    embedding_values = tl.load(input_ptr + input_offsets, mask=input_mask, other=0.0)
+    
+    # Calculate output offset
+    output_offset = batch_idx * seq_len * embed_dim + seq_idx * embed_dim + dim_offsets
+    
+    # Store results
+    tl.store(output_ptr + output_offset, embedding_values, mask=dim_mask)
 
 
 def kernel_function(wait_tensor_871, arg583_1):
     """
-    Fused operation:
-      1. View wait_tensor_871 as [8, -1], split off first 65667072 elements
-      2. Reinterpret as bf16, view as [128256, 4096] embedding weight
-      3. Perform embedding lookup with indices arg583_1
+    Fused embedding lookup implementation.
     
-    Since wait_tensor_871 is already bf16 in the test, the reinterpret is a no-op view.
-    We treat the first 128256*4096 bf16 elements as the embedding table.
+    This kernel fuses the following operations:
+    1. View operations to reshape input tensor
+    2. Split operation to extract embedding table portion  
+    3. Embedding lookup using indices
+    
+    Args:
+        wait_tensor_871: Input tensor [525336576] containing embedding table data
+        arg583_1: Indices tensor [1, 8192] for embedding lookup
+        
+    Returns:
+        Output tensor [1, 8192, 4096] with embedded values
     """
-    assert wait_tensor_871.is_cuda
-    assert arg583_1.is_cuda
-
-    V = 128256
-    H = 4096
-    weight_numel = V * H  # 525336576
-
-    # The original computation: view as [8, N/8], take first 65667072 cols (bf16 elements
-    # since input is already bf16 in test). With 8 rows and 65667072 cols => 8*65667072 = 525336576
-    # bf16 elements, then viewed as [128256, 4096].
-    # So effectively the first weight_numel bf16 elements form the weight in row-major order.
     
-    # Get a bf16 contiguous view of the weight portion
-    flat_bf16 = wait_tensor_871.view(torch.bfloat16) if wait_tensor_871.dtype != torch.bfloat16 else wait_tensor_871
+    # Validate inputs
+    assert wait_tensor_871.dtype == torch.bfloat16, f"Expected bfloat16, got {wait_tensor_871.dtype}"
+    assert arg583_1.dtype == torch.int64, f"Expected int64, got {arg583_1.dtype}"
+    assert wait_tensor_871.device == arg583_1.device, "Input tensors must be on same device"
     
-    # Per the model: view [8, -1], split [65667072] on dim 1 -> [8, 65667072]
-    # Then view as bf16 (no-op here), then view [128256, 4096]
-    # The split takes contiguous elements: rows 0..7 each contribute 65667072 elements,
-    # but split_with_sizes on dim=1 with [65667072] gives shape [8, 65667072] which when
-    # flattened in C-order is NOT the same as the first 525336576 elements of the original.
-    # Wait: view_default has shape [8, N/8]. Split on dim 1 takes first 65667072 cols.
-    # Since N/8 = 525336576/8... let me check: 525336576/8 = 65667072. So split takes ALL of it!
-    # So getitem == view_default, and total = 525336576 bf16 elements.
+    # Extract dimensions from the reference implementation
+    batch_size, seq_len = arg583_1.shape  # [1, 8192]
+    embed_dim = 4096  # From view_default_1 shape [128256, 4096]
+    vocab_size = 128256  # From view_default_1 shape [128256, 4096]
     
-    weight = flat_bf16[:weight_numel].view(V, H)
-
-    indices = arg583_1.contiguous().view(-1)
-    N = indices.numel()
-    out_shape = list(arg583_1.shape) + [H]
-
-    output = torch.empty(out_shape, dtype=torch.bfloat16, device=wait_tensor_871.device)
-    out_flat = output.view(N, H)
-
-    BLOCK_H = 512
-    grid = (N, triton.cdiv(H, BLOCK_H))
-    _embedding_kernel[grid](
-        weight, indices, out_flat,
-        N, H=H, BLOCK_H=BLOCK_H,
+    # Validate tensor sizes match expected dimensions
+    expected_input_size = vocab_size * embed_dim  # 128256 * 4096 = 525336576
+    assert wait_tensor_871.numel() >= expected_input_size, \
+        f"Input tensor too small: {wait_tensor_871.numel()} < {expected_input_size}"
+    
+    # Validate indices are in valid range
+    assert torch.all(arg583_1 >= 0) and torch.all(arg583_1 < vocab_size), \
+        f"Indices out of range [0, {vocab_size})"
+    
+    # Allocate output tensor
+    output = torch.empty(
+        (batch_size, seq_len, embed_dim), 
+        dtype=torch.bfloat16, 
+        device=wait_tensor_871.device
     )
-
+    
+    # Calculate grid dimensions
+    # We need to process each (batch, sequence, embedding_dim) combination
+    BLOCK_SIZE = 128  # Will be selected by autotune
+    dim_blocks = triton.cdiv(embed_dim, BLOCK_SIZE)
+    
+    def grid(META):
+        return (batch_size, seq_len, triton.cdiv(embed_dim, META['BLOCK_SIZE']))
+    
+    # Launch kernel
+    fused_embedding_kernel[grid](
+        wait_tensor_871,
+        arg583_1, 
+        output,
+        batch_size,
+        seq_len,
+        embed_dim,
+        vocab_size,
+    )
+    
     return output

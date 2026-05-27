@@ -4,52 +4,70 @@ import triton.language as tl
 
 
 @triton.jit
-def _embedding_kernel(
-    weight_ptr,
-    idx_ptr,
-    out_ptr,
-    N,
-    H: tl.constexpr,
-    BLOCK_N: tl.constexpr,
-    BLOCK_H: tl.constexpr,
+def fused_embedding_multirow_kernel(
+    input_ptr,
+    indices_ptr,
+    output_ptr,
+    total_rows,
+    embed_dim,
+    BLOCK_DIM: tl.constexpr,
+    ROWS_PER_BLOCK: tl.constexpr,
 ):
-    pid_n = tl.program_id(0)
-    pid_h = tl.program_id(1)
+    pid = tl.program_id(0)
+    dim_block_idx = tl.program_id(1)
 
-    offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)
-    mask_n = offs_n < N
-    offs_h = pid_h * BLOCK_H + tl.arange(0, BLOCK_H)
+    row_start = pid * ROWS_PER_BLOCK
+    dim_offsets = dim_block_idx * BLOCK_DIM + tl.arange(0, BLOCK_DIM)
+    dim_mask = dim_offsets < embed_dim
 
-    idx = tl.load(idx_ptr + offs_n, mask=mask_n, other=0)
-    src = weight_ptr + idx[:, None] * H + offs_h[None, :]
-    dst = out_ptr + offs_n[:, None] * H + offs_h[None, :]
-    w = tl.load(src, mask=mask_n[:, None])
-    tl.store(dst, w, mask=mask_n[:, None])
+    # Process multiple rows per block for better latency hiding
+    for r in range(ROWS_PER_BLOCK):
+        row_idx = row_start + r
+        if row_idx < total_rows:
+            embedding_idx = tl.load(indices_ptr + row_idx)
+            src_base = embedding_idx * embed_dim
+            dst_base = row_idx * embed_dim
+            vals = tl.load(input_ptr + src_base + dim_offsets, mask=dim_mask, other=0.0)
+            tl.store(output_ptr + dst_base + dim_offsets, vals, mask=dim_mask)
 
 
 def kernel_function(wait_tensor_871, arg583_1):
-    V = 128256
-    H = 4096
-    weight_numel = V * H
+    batch_size, seq_len = arg583_1.shape
+    embed_dim = 4096
 
-    flat_bf16 = wait_tensor_871 if wait_tensor_871.dtype == torch.bfloat16 else wait_tensor_871.view(torch.bfloat16)
-    weight = flat_bf16[:weight_numel].view(V, H)
+    output = torch.empty(
+        (batch_size, seq_len, embed_dim),
+        dtype=torch.bfloat16,
+        device=wait_tensor_871.device,
+    )
 
-    indices = arg583_1.contiguous().view(-1)
-    N = indices.numel()
-    out_shape = list(arg583_1.shape) + [H]
+    flat_indices = arg583_1.reshape(-1)
+    total_rows = flat_indices.shape[0]
 
-    output = torch.empty(out_shape, dtype=torch.bfloat16, device=wait_tensor_871.device)
-    out_flat = output.view(N, H)
+    # Tuning: 4 rows per block increases ILP within each block,
+    # allowing overlapping of memory requests from different rows.
+    # BLOCK_DIM=1024 with 8 warps gives good balance of vectorization
+    # and occupancy on H100.
+    ROWS_PER_BLOCK = 4
+    BLOCK_DIM = 1024
+    num_warps = 8
+    num_stages = 4
 
-    BLOCK_N = 8
-    BLOCK_H = 512
-    grid = (triton.cdiv(N, BLOCK_N), triton.cdiv(H, BLOCK_H))
-    _embedding_kernel[grid](
-        weight, indices, out_flat,
-        N, H=H, BLOCK_N=BLOCK_N, BLOCK_H=BLOCK_H,
-        num_warps=4,
-        num_stages=4,
+    dim_blocks = triton.cdiv(embed_dim, BLOCK_DIM)
+    row_blocks = triton.cdiv(total_rows, ROWS_PER_BLOCK)
+
+    grid = (row_blocks, dim_blocks)
+
+    fused_embedding_multirow_kernel[grid](
+        wait_tensor_871,
+        flat_indices,
+        output.view(-1, embed_dim),
+        total_rows,
+        embed_dim,
+        BLOCK_DIM=BLOCK_DIM,
+        ROWS_PER_BLOCK=ROWS_PER_BLOCK,
+        num_warps=num_warps,
+        num_stages=num_stages,
     )
 
     return output
