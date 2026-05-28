@@ -1,0 +1,28 @@
+{
+  "eager_ms": null,
+  "kernelagent_triton": {
+    "status": "FAIL",
+    "tol_tier": "reduction",
+    "max_abs_err": 0.0,
+    "max_tol_units": 0.0,
+    "reason": "execution (trial 0): index 1 is out of bounds for dimension 0 with size 0"
+  },
+  "kernelagent_triton_opt": {
+    "status": "SKIP",
+    "reason": "no optimized_kernel.py"
+  },
+  "torch_compile": {
+    "status": "ERROR",
+    "tol_tier": "reduction",
+    "max_abs_err": 0.0,
+    "max_tol_units": 0.0,
+    "reason": "execution (trial 0): index 1 is out of bounds for dimension 0 with size 0"
+  },
+  "torch_compile_max_autotune": {
+    "status": "ERROR",
+    "tol_tier": "reduction",
+    "max_abs_err": 0.0,
+    "max_tol_units": 0.0,
+    "reason": "execution (trial 0): index 1 is out of bounds for dimension 0 with size 0"
+  }
+}

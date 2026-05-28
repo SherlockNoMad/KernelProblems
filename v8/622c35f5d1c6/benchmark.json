@@ -1,0 +1,32 @@
+{
+  "eager_ms": 12.14939697265625,
+  "kernelagent_triton": {
+    "status": "PASS",
+    "tol_tier": "bitwise",
+    "max_abs_err": 3.0517578125e-05,
+    "max_tol_units": 0.000381450226996094,
+    "atol_eff": 0.08,
+    "rtol": 0.001,
+    "time_ms": 2.911875
+  },
+  "kernelagent_triton_opt": {
+    "status": "SKIP",
+    "reason": "no optimized_kernel.py"
+  },
+  "torch_compile": {
+    "status": "PASS",
+    "tol_tier": "bitwise",
+    "max_abs_err": 0.0,
+    "max_tol_units": 0.0,
+    "note": "trusted baseline",
+    "time_ms": 3.003287658691406
+  },
+  "torch_compile_max_autotune": {
+    "status": "PASS",
+    "tol_tier": "bitwise",
+    "max_abs_err": 0.0,
+    "max_tol_units": 0.0,
+    "note": "trusted baseline",
+    "time_ms": 6.798575439453125
+  }
+}
