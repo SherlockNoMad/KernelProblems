@@ -1,13 +1,13 @@
 {
-  "eager_ms": 12.14939697265625,
+  "eager_ms": 3.9131265258789063,
   "kernelagent_triton": {
     "status": "PASS",
-    "tol_tier": "bitwise",
-    "max_abs_err": 3.0517578125e-05,
-    "max_tol_units": 0.000381450226996094,
+    "tol_tier": "pointwise",
+    "max_abs_err": 6.103515625e-05,
+    "max_tol_units": 0.0007628603489138186,
     "atol_eff": 0.08,
     "rtol": 0.001,
-    "time_ms": 2.911875
+    "time_ms": 0.9357644653320313
   },
   "kernelagent_triton_opt": {
     "status": "SKIP",
@@ -15,18 +15,26 @@
   },
   "torch_compile": {
     "status": "PASS",
-    "tol_tier": "bitwise",
+    "tol_tier": "pointwise",
     "max_abs_err": 0.0,
     "max_tol_units": 0.0,
-    "note": "trusted baseline",
-    "time_ms": 3.003287658691406
+    "note": "3 seeds; bitwise PASS; memory PASS",
+    "time_ms": 1.1651411437988282
   },
   "torch_compile_max_autotune": {
+    "status": "PASS",
+    "tol_tier": "pointwise",
+    "max_abs_err": 0.0,
+    "max_tol_units": 0.0,
+    "note": "3 seeds; bitwise PASS; memory PASS",
+    "time_ms": 1.0774041748046874
+  },
+  "simple_prompt_kernel": {
     "status": "PASS",
     "tol_tier": "bitwise",
     "max_abs_err": 0.0,
     "max_tol_units": 0.0,
-    "note": "trusted baseline",
-    "time_ms": 6.798575439453125
+    "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: HBM 90.84% sustained peak (NCU), 7.20 TB/s",
+    "time_ms": 0.8654975891113281
   }
 }

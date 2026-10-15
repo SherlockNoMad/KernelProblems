@@ -1,0 +1,35 @@
+{
+  "eager_ms": 0.03492543935775757,
+  "kernelagent_triton": {
+    "status": "SKIP",
+    "reason": "no kernel.py"
+  },
+  "kernelagent_triton_opt": {
+    "status": "SKIP",
+    "reason": "no optimized_kernel.py"
+  },
+  "torch_compile": {
+    "status": "PASS",
+    "tol_tier": "complex",
+    "max_abs_err": 0.0,
+    "max_tol_units": 0.0,
+    "note": "3 seeds; bitwise PASS; memory PASS",
+    "time_ms": 0.030133121013641358
+  },
+  "torch_compile_max_autotune": {
+    "status": "PASS",
+    "tol_tier": "complex",
+    "max_abs_err": 0.0,
+    "max_tol_units": 0.0,
+    "note": "3 seeds; bitwise PASS; memory PASS",
+    "time_ms": 0.025893759727478028
+  },
+  "simple_prompt_kernel": {
+    "status": "PASS",
+    "tol_tier": "bitwise",
+    "max_abs_err": 0.0,
+    "max_tol_units": 0.0,
+    "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 88.52% matched memory control; tighter roofline not established",
+    "time_ms": 0.004163840115070343
+  }
+}

@@ -1,37 +1,45 @@
 {
-  "eager_ms": 1.7649433898925782,
+  "eager_ms": 0.255284481048584,
   "kernelagent_triton": {
     "status": "PASS",
     "tol_tier": "reduction",
     "max_abs_err": 0.015625,
-    "max_tol_units": 0.2207505702972412,
+    "max_tol_units": 0.17421603202819824,
     "atol_eff": 0.05,
     "rtol": 0.01,
-    "time_ms": 0.5233987045288085
+    "time_ms": 0.08836671829223633
   },
   "kernelagent_triton_opt": {
     "status": "PASS",
     "tol_tier": "reduction",
-    "max_abs_err": 0.015625,
-    "max_tol_units": 0.2207505702972412,
+    "max_abs_err": 0.001953125,
+    "max_tol_units": 0.035561878234148026,
     "atol_eff": 0.05,
     "rtol": 0.01,
-    "time_ms": 0.5200384140014649
+    "time_ms": 0.085546236038208
   },
   "torch_compile": {
     "status": "PASS",
     "tol_tier": "reduction",
-    "max_abs_err": 0.015625,
-    "max_tol_units": 0.17513135075569153,
-    "note": "trusted baseline",
-    "time_ms": 0.29050336837768553
+    "max_abs_err": 0.0,
+    "max_tol_units": 0.0,
+    "note": "3 seeds; bitwise PASS; memory PASS",
+    "time_ms": 0.08906880378723145
   },
   "torch_compile_max_autotune": {
     "status": "PASS",
     "tol_tier": "reduction",
     "max_abs_err": 0.015625,
-    "max_tol_units": 0.17513135075569153,
-    "note": "trusted baseline",
-    "time_ms": 1.5913462829589844
+    "max_tol_units": 0.17421603202819824,
+    "note": "3 seeds; bitwise FAIL; memory PASS",
+    "time_ms": 0.08541695594787597
+  },
+  "simple_prompt_kernel": {
+    "status": "PASS",
+    "tol_tier": "bitwise",
+    "max_abs_err": 0.0,
+    "max_tol_units": 0.0,
+    "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 99.79% full-traffic memory control; fused kernel DRAM 79.17% peak",
+    "time_ms": 0.06727871894836426
   }
 }

@@ -56,12 +56,14 @@ class Model(torch.nn.Module):
 
 
 def get_inputs():
-    _fused_rms_norm_2_recomputed = torch.randn([], dtype=torch.float32, device='cuda')
     mm_656 = torch.randn([8192, 4096], dtype=torch.bfloat16, device='cuda')
     mm_658 = torch.randn([8192, 4096], dtype=torch.bfloat16, device='cuda')
     mm_660 = torch.randn([8192, 4096], dtype=torch.bfloat16, device='cuda')
     add_1 = torch.randn([1, 8192, 4096], dtype=torch.bfloat16, device='cuda')
     _unsafe_view_450 = torch.randn([4096], dtype=torch.bfloat16, device='cuda')
+    _fused_rms_norm_2_recomputed = torch.ops.aten._fused_rms_norm.default(
+        add_1, [4096], _unsafe_view_450, 1e-05
+    )
     add_215 = torch.randn([1, 8192, 4096], dtype=torch.bfloat16, device='cuda')
     return [_fused_rms_norm_2_recomputed, mm_656, mm_658, mm_660, add_1, _unsafe_view_450, add_215]
 

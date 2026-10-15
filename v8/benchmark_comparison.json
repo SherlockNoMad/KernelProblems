@@ -1,0 +1,3405 @@
+{
+  "source": "v8/*/benchmark.json",
+  "timing_unit": "ms",
+  "problem_count": 20,
+  "backend_order": [
+    "kernelagent_triton",
+    "kernelagent_triton_opt",
+    "torch_compile",
+    "torch_compile_max_autotune",
+    "simple_prompt_kernel"
+  ],
+  "interpretation": [
+    "All timings are fresh NVIDIA GB300 measurements. For each problem, eager and all available backends used the same physical GPU, identical seed-0 inputs, software environment, and CUDA-graph timing method.",
+    "Time is the median of 15 interleaved CUDA-event samples, with 50 calls per graph replay. Compilation, five function warmups, five graph warmups, and one replay before each sample are excluded. Outputs are released after each captured call.",
+    "Both compiled backends use torch.compile with inductor, fullgraph=True, dynamic=False and internal CUDA graphs disabled. The max-autotune entry enables max_autotune. Each backend uses the same external CUDA-graph timing procedure.",
+    "Other-backend PASS requires numerical agreement on three seeds under the previously stored atol_eff/rtol, or 0.05/0.01 where absent. Compiled outputs receive the same check. Historical bitwise tolerance labels are renamed pointwise; they never imply byte equality.",
+    "simple_prompt_kernel PASS requires strict byte equality and memory parity. The consolidated report's per_problem_measurements section contains environment and parity details; per-problem benchmark.json files retain their original result format. Checks use seeds 17, 113, 2027, three calls per seed, retained-output checks, unchanged inputs, matching output metadata/aliases, and peak allocation no higher than eager.",
+    "Ratios include only PASS entries with positive timings. Timings for numerical failures are retained but excluded from those ratios. Very small differences can fall within measurement variation.",
+    "Roofline notes retain source-matched prior profiling; this rerun measures latency and parity, not new roofline profiles. Nine simple kernels still lack an established roofline result."
+  ],
+  "source_sha256": {
+    "v8/12545c1e9b06/benchmark.json": "5395fedde9aa16e26de2cb3c6a0d694901690eda680afbae0895e2d810fc1a9c",
+    "v8/385e1beb9bb9/benchmark.json": "c27195545ac4760a93a8fc9262a0d421feb522d901c85094bbc426a4200a3873",
+    "v8/3c6c589cdf81/benchmark.json": "a3ad401fa79ed8080ced070095535a2317bb6c0a9e9f926aeafdec88f7f50de0",
+    "v8/43f0c930291e/benchmark.json": "ecdfecb24f2dac62f4531d69531ea69879d573d0d985e9aaa9bf9c282ef801fb",
+    "v8/493cad38cac9/benchmark.json": "559445b4a1abff664694807c505bce78cc4098b6feebdfbc90e9c6c8197cb3c6",
+    "v8/4b90e2d83144/benchmark.json": "21a15a05899e100853d93dd04435a19ecfacbf18f0cd747455f3eb17388c82c3",
+    "v8/622c35f5d1c6/benchmark.json": "457bbf32e6a3ab0f4b0b306c3027dc8bb19fdfbcdfd79d33e1559a64515cb1c0",
+    "v8/71f1d2c9f38b/benchmark.json": "c95275ba3fd0e0f13719f2e18a237b8a556c7b6a424ce8e0a5fd5f8659378eb8",
+    "v8/7815074de963/benchmark.json": "18c98fff59d635006dc9f1f97273b60c81a474e00c6ca14bc365d3135c3c8de6",
+    "v8/7884328a5557/benchmark.json": "9a25b9def19c37ef77b9546c47e080fc31930f516898da58e03614433e1a1ed1",
+    "v8/7e38211c7f1c/benchmark.json": "572fae0bb8bad15f35cb052b6ef9cdda3bac47472acbdc9e69dea868b08f73de",
+    "v8/8e33a91b7364/benchmark.json": "a999abfbf6679e62365cf369ea35f6cb4e0b205086df64eb49b254b236cc35c3",
+    "v8/94985bdb7630/benchmark.json": "a1dbd558d282b3d9d1a8a87e87b7b94d369a97165cd0a3c0c2635a05da3f1ae6",
+    "v8/97032595d968/benchmark.json": "8a9853ddbafd4c6c9ff5fb162e242c99154e43dc6b921e13dcca6d7bc9492139",
+    "v8/c68dae22972b/benchmark.json": "1813971b22dc1e3480c70ea2a83049c7e1db4d645e0462489d0d9b8d3c21d596",
+    "v8/c8c60d8f7015/benchmark.json": "0604c8248b8a45c6d86faa6121553d216b04b12f64cf0d270985d0b3b50e263a",
+    "v8/d8f596b3df34/benchmark.json": "8b8a636c47ef3eae946a425dbb748701e8dc12b3aa304ccc3c9144352b390403",
+    "v8/e29b92927600/benchmark.json": "6f3e7045e049514313013a923219f593d2412fb0714d89c36f5aa90719295a2c",
+    "v8/f4e9e58fef73/benchmark.json": "59a3f6288367372594e20e747a59d9e4eab552fc51a4de93fd5dd052ea1c21a9",
+    "v8/f6251e84e3fa/benchmark.json": "eae924ea00391cbb0caba23f9606a515ac8a557b63c2eacc5a443536db405990"
+  },
+  "backend_summary": {
+    "kernelagent_triton": {
+      "present": 20,
+      "status_counts": {
+        "PASS": 19,
+        "SKIP": 1,
+        "MISSING": 0
+      },
+      "timed_passes": 19,
+      "passed_with_zero_max_abs_err": 2,
+      "passed_with_nonzero_error_and_bitwise_label": 0,
+      "reported_tol_tiers": [
+        "reduction",
+        "pointwise",
+        "complex"
+      ],
+      "bitwise_passes": 2,
+      "memory_passes": 12,
+      "bitwise_and_memory_passes": 2
+    },
+    "kernelagent_triton_opt": {
+      "present": 20,
+      "status_counts": {
+        "PASS": 16,
+        "SKIP": 4,
+        "MISSING": 0
+      },
+      "timed_passes": 16,
+      "passed_with_zero_max_abs_err": 1,
+      "passed_with_nonzero_error_and_bitwise_label": 0,
+      "reported_tol_tiers": [
+        "reduction",
+        "pointwise",
+        "complex"
+      ],
+      "bitwise_passes": 1,
+      "memory_passes": 10,
+      "bitwise_and_memory_passes": 1
+    },
+    "torch_compile": {
+      "present": 20,
+      "status_counts": {
+        "PASS": 18,
+        "FAIL": 2,
+        "MISSING": 0
+      },
+      "timed_passes": 18,
+      "passed_with_zero_max_abs_err": 7,
+      "passed_with_nonzero_error_and_bitwise_label": 0,
+      "reported_tol_tiers": [
+        "reduction",
+        "pointwise",
+        "complex"
+      ],
+      "bitwise_passes": 7,
+      "memory_passes": 19,
+      "bitwise_and_memory_passes": 7
+    },
+    "torch_compile_max_autotune": {
+      "present": 20,
+      "status_counts": {
+        "PASS": 18,
+        "FAIL": 2,
+        "MISSING": 0
+      },
+      "timed_passes": 18,
+      "passed_with_zero_max_abs_err": 6,
+      "passed_with_nonzero_error_and_bitwise_label": 0,
+      "reported_tol_tiers": [
+        "reduction",
+        "pointwise",
+        "complex"
+      ],
+      "bitwise_passes": 6,
+      "memory_passes": 19,
+      "bitwise_and_memory_passes": 6
+    },
+    "simple_prompt_kernel": {
+      "present": 20,
+      "status_counts": {
+        "PASS": 20,
+        "MISSING": 0
+      },
+      "timed_passes": 20,
+      "passed_with_zero_max_abs_err": 20,
+      "passed_with_nonzero_error_and_bitwise_label": 0,
+      "reported_tol_tiers": [
+        "bitwise"
+      ],
+      "bitwise_passes": 20,
+      "memory_passes": 20,
+      "bitwise_and_memory_passes": 20
+    }
+  },
+  "recorded_ratio_definition": "other[\"time_ms\"] / simple_prompt_kernel[\"time_ms\"]",
+  "recorded_ratio_summary": {
+    "kernelagent_triton": {
+      "paired_problems": 19,
+      "geomean_recorded_ratio": 1.6111821100214394,
+      "minimum_recorded_ratio": 0.9811377562412187,
+      "maximum_recorded_ratio": 7.228165405433104,
+      "simple_lower_recorded_time": 18,
+      "equal_recorded_time": 0,
+      "simple_higher_recorded_time": 1
+    },
+    "kernelagent_triton_opt": {
+      "paired_problems": 16,
+      "geomean_recorded_ratio": 1.283840105176052,
+      "minimum_recorded_ratio": 0.9932954995920511,
+      "maximum_recorded_ratio": 1.8076319093603044,
+      "simple_lower_recorded_time": 15,
+      "equal_recorded_time": 0,
+      "simple_higher_recorded_time": 1
+    },
+    "torch_compile": {
+      "paired_problems": 18,
+      "geomean_recorded_ratio": 1.902651503557498,
+      "minimum_recorded_ratio": 0.8711832207490502,
+      "maximum_recorded_ratio": 7.236858328104247,
+      "simple_lower_recorded_time": 15,
+      "equal_recorded_time": 0,
+      "simple_higher_recorded_time": 3
+    },
+    "torch_compile_max_autotune": {
+      "paired_problems": 18,
+      "geomean_recorded_ratio": 1.939205884039003,
+      "minimum_recorded_ratio": 0.7311245400567393,
+      "maximum_recorded_ratio": 7.4109249020026535,
+      "simple_lower_recorded_time": 15,
+      "equal_recorded_time": 0,
+      "simple_higher_recorded_time": 3
+    }
+  },
+  "best_other_recorded_ratio_summary": {
+    "paired_problems": 20,
+    "geomean_recorded_ratio": 1.2484026593299773,
+    "minimum_recorded_ratio": 0.7311245400567393,
+    "maximum_recorded_ratio": 6.218720943140869,
+    "simple_lower_recorded_time": 17,
+    "equal_recorded_time": 0,
+    "simple_higher_recorded_time": 3
+  },
+  "recorded_eager_over_simple_ratio_summary": {
+    "paired_problems": 20,
+    "geomean_recorded_ratio": 3.4986673869615075,
+    "minimum_recorded_ratio": 1.3197385101426704,
+    "maximum_recorded_ratio": 9.730480137377013,
+    "simple_lower_recorded_time": 20,
+    "equal_recorded_time": 0,
+    "simple_higher_recorded_time": 0
+  },
+  "problems_without_passing_other_timing": [],
+  "per_problem_comparison": {
+    "12545c1e9b06": {
+      "passing_alternatives_with_time": 4,
+      "best_other_backend": "torch_compile_max_autotune",
+      "best_other_time_ms": 0.08541695594787597,
+      "simple_time_ms": 0.06727871894836426,
+      "best_other_over_simple_recorded_ratio": 1.26959842997951
+    },
+    "385e1beb9bb9": {
+      "passing_alternatives_with_time": 4,
+      "best_other_backend": "kernelagent_triton",
+      "best_other_time_ms": 0.19218368530273439,
+      "simple_time_ms": 0.19587839126586915,
+      "best_other_over_simple_recorded_ratio": 0.9811377562412187
+    },
+    "3c6c589cdf81": {
+      "passing_alternatives_with_time": 4,
+      "best_other_backend": "torch_compile_max_autotune",
+      "best_other_time_ms": 0.13115391731262208,
+      "simple_time_ms": 0.0959552001953125,
+      "best_other_over_simple_recorded_ratio": 1.3668244873197508
+    },
+    "43f0c930291e": {
+      "passing_alternatives_with_time": 1,
+      "best_other_backend": "kernelagent_triton",
+      "best_other_time_ms": 0.12968128204345702,
+      "simple_time_ms": 0.10463359832763672,
+      "best_other_over_simple_recorded_ratio": 1.239384711184156
+    },
+    "493cad38cac9": {
+      "passing_alternatives_with_time": 4,
+      "best_other_backend": "kernelagent_triton_opt",
+      "best_other_time_ms": 0.021675519943237305,
+      "simple_time_ms": 0.018378239870071412,
+      "best_other_over_simple_recorded_ratio": 1.1794121796470536
+    },
+    "4b90e2d83144": {
+      "passing_alternatives_with_time": 4,
+      "best_other_backend": "kernelagent_triton",
+      "best_other_time_ms": 0.018010239601135253,
+      "simple_time_ms": 0.016576000452041627,
+      "best_other_over_simple_recorded_ratio": 1.0865250428318476
+    },
+    "622c35f5d1c6": {
+      "passing_alternatives_with_time": 3,
+      "best_other_backend": "kernelagent_triton",
+      "best_other_time_ms": 0.9357644653320313,
+      "simple_time_ms": 0.8654975891113281,
+      "best_other_over_simple_recorded_ratio": 1.0811866804768937
+    },
+    "71f1d2c9f38b": {
+      "passing_alternatives_with_time": 4,
+      "best_other_backend": "kernelagent_triton_opt",
+      "best_other_time_ms": 0.8507622528076172,
+      "simple_time_ms": 0.5172639846801758,
+      "best_other_over_simple_recorded_ratio": 1.6447351410588607
+    },
+    "7815074de963": {
+      "passing_alternatives_with_time": 4,
+      "best_other_backend": "kernelagent_triton",
+      "best_other_time_ms": 0.13013248443603515,
+      "simple_time_ms": 0.12010047912597656,
+      "best_other_over_simple_recorded_ratio": 1.083530102319873
+    },
+    "7884328a5557": {
+      "passing_alternatives_with_time": 4,
+      "best_other_backend": "kernelagent_triton_opt",
+      "best_other_time_ms": 0.026316800117492677,
+      "simple_time_ms": 0.025662720203399658,
+      "best_other_over_simple_recorded_ratio": 1.0254875519395006
+    },
+    "7e38211c7f1c": {
+      "passing_alternatives_with_time": 2,
+      "best_other_backend": "torch_compile_max_autotune",
+      "best_other_time_ms": 0.025893759727478028,
+      "simple_time_ms": 0.004163840115070343,
+      "best_other_over_simple_recorded_ratio": 6.218720943140869
+    },
+    "8e33a91b7364": {
+      "passing_alternatives_with_time": 4,
+      "best_other_backend": "torch_compile_max_autotune",
+      "best_other_time_ms": 0.3248006439208984,
+      "simple_time_ms": 0.32684864044189454,
+      "best_other_over_simple_recorded_ratio": 0.9937341133858557
+    },
+    "94985bdb7630": {
+      "passing_alternatives_with_time": 4,
+      "best_other_backend": "kernelagent_triton",
+      "best_other_time_ms": 0.1301696014404297,
+      "simple_time_ms": 0.11985024452209472,
+      "best_other_over_simple_recorded_ratio": 1.0861020931536987
+    },
+    "97032595d968": {
+      "passing_alternatives_with_time": 4,
+      "best_other_backend": "kernelagent_triton_opt",
+      "best_other_time_ms": 0.042746877670288085,
+      "simple_time_ms": 0.02560767889022827,
+      "best_other_over_simple_recorded_ratio": 1.6692991916030322
+    },
+    "c68dae22972b": {
+      "passing_alternatives_with_time": 4,
+      "best_other_backend": "kernelagent_triton",
+      "best_other_time_ms": 0.09706815719604492,
+      "simple_time_ms": 0.09698623657226563,
+      "best_other_over_simple_recorded_ratio": 1.0008446623631824
+    },
+    "c8c60d8f7015": {
+      "passing_alternatives_with_time": 4,
+      "best_other_backend": "kernelagent_triton_opt",
+      "best_other_time_ms": 0.032719359397888184,
+      "simple_time_ms": 0.025428481101989746,
+      "best_other_over_simple_recorded_ratio": 1.286720951466029
+    },
+    "d8f596b3df34": {
+      "passing_alternatives_with_time": 4,
+      "best_other_backend": "torch_compile_max_autotune",
+      "best_other_time_ms": 0.059978880882263184,
+      "simple_time_ms": 0.0820364761352539,
+      "best_other_over_simple_recorded_ratio": 0.7311245400567393
+    },
+    "e29b92927600": {
+      "passing_alternatives_with_time": 4,
+      "best_other_backend": "kernelagent_triton_opt",
+      "best_other_time_ms": 0.00469760000705719,
+      "simple_time_ms": 0.00412416011095047,
+      "best_other_over_simple_recorded_ratio": 1.1390440430729452
+    },
+    "f4e9e58fef73": {
+      "passing_alternatives_with_time": 4,
+      "best_other_backend": "torch_compile",
+      "best_other_time_ms": 0.021346559524536134,
+      "simple_time_ms": 0.017230080366134645,
+      "best_other_over_simple_recorded_ratio": 1.2389123597178537
+    },
+    "f6251e84e3fa": {
+      "passing_alternatives_with_time": 1,
+      "best_other_backend": "kernelagent_triton",
+      "best_other_time_ms": 0.469736328125,
+      "simple_time_ms": 0.44192512512207033,
+      "best_other_over_simple_recorded_ratio": 1.0629319344430745
+    }
+  },
+  "benchmarks": {
+    "12545c1e9b06": {
+      "eager_ms": 0.255284481048584,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.015625,
+        "max_tol_units": 0.17421603202819824,
+        "atol_eff": 0.05,
+        "rtol": 0.01,
+        "time_ms": 0.08836671829223633
+      },
+      "kernelagent_triton_opt": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.001953125,
+        "max_tol_units": 0.035561878234148026,
+        "atol_eff": 0.05,
+        "rtol": 0.01,
+        "time_ms": 0.085546236038208
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS",
+        "time_ms": 0.08906880378723145
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.015625,
+        "max_tol_units": 0.17421603202819824,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.08541695594787597
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 99.79% full-traffic memory control; fused kernel DRAM 79.17% peak",
+        "time_ms": 0.06727871894836426
+      }
+    },
+    "385e1beb9bb9": {
+      "eager_ms": 0.3166451263427734,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "pointwise",
+        "max_abs_err": 0.125,
+        "max_tol_units": 0.8802816867828369,
+        "atol_eff": 0.125,
+        "rtol": 0.001,
+        "time_ms": 0.19218368530273439
+      },
+      "kernelagent_triton_opt": {
+        "status": "PASS",
+        "tol_tier": "pointwise",
+        "max_abs_err": 0.125,
+        "max_tol_units": 0.8802816867828369,
+        "atol_eff": 0.125,
+        "rtol": 0.001,
+        "time_ms": 0.19456512451171876
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "pointwise",
+        "max_abs_err": 0.125,
+        "max_tol_units": 0.8802816867828369,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.19533952713012695
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "pointwise",
+        "max_abs_err": 0.125,
+        "max_tol_units": 0.8802816867828369,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.19555007934570312
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: HBM 89.93% sustained peak; 99.20% matched memory control",
+        "time_ms": 0.19587839126586915
+      }
+    },
+    "3c6c589cdf81": {
+      "eager_ms": 0.1716511917114258,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 1.216217041015625,
+        "max_tol_units": 0.5689584016799927,
+        "atol_eff": 1.221923828125,
+        "rtol": 0.01,
+        "time_ms": 0.26405504226684573
+      },
+      "kernelagent_triton_opt": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 1.277496337890625,
+        "max_tol_units": 0.547902524471283,
+        "atol_eff": 1.221923828125,
+        "rtol": 0.01,
+        "time_ms": 0.14131391525268555
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 1.27752685546875,
+        "max_tol_units": 0.547905445098877,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.132675199508667
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 1.277496337890625,
+        "max_tol_units": 0.5478996634483337,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.13115391731262208
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 48.5% of compulsory-traffic bandwidth bound; roofline incomplete",
+        "time_ms": 0.0959552001953125
+      }
+    },
+    "43f0c930291e": {
+      "eager_ms": 0.18012287139892577,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 1.9814453125,
+        "max_tol_units": 0.5952380895614624,
+        "atol_eff": 0.05,
+        "rtol": 0.01,
+        "time_ms": 0.12968128204345702
+      },
+      "kernelagent_triton_opt": {
+        "status": "SKIP",
+        "reason": "no optimized_kernel.py"
+      },
+      "torch_compile": {
+        "status": "FAIL",
+        "tol_tier": "reduction",
+        "max_abs_err": 2.0379638671875,
+        "max_tol_units": 19.757347106933594,
+        "note": "3 seeds; bitwise FAIL; memory PASS; numerical tolerance exceeded",
+        "time_ms": 0.08202495574951171
+      },
+      "torch_compile_max_autotune": {
+        "status": "FAIL",
+        "tol_tier": "reduction",
+        "max_abs_err": 2.0379638671875,
+        "max_tol_units": 19.758487701416016,
+        "note": "3 seeds; bitwise FAIL; memory PASS; numerical tolerance exceeded",
+        "time_ms": 0.0711295986175537
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 55.5% of compulsory-traffic bandwidth bound; roofline incomplete",
+        "time_ms": 0.10463359832763672
+      }
+    },
+    "493cad38cac9": {
+      "eager_ms": 0.16255680084228516,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "atol_eff": 0.05,
+        "rtol": 0.01,
+        "time_ms": 0.13284095764160156
+      },
+      "kernelagent_triton_opt": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.015625,
+        "max_tol_units": 0.22271716594696045,
+        "atol_eff": 0.05,
+        "rtol": 0.01,
+        "time_ms": 0.021675519943237305
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS",
+        "time_ms": 0.10756799697875977
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS",
+        "time_ms": 0.1273100757598877
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 99.17% matched memory control; mixed HBM/L2 access",
+        "time_ms": 0.018378239870071412
+      }
+    },
+    "4b90e2d83144": {
+      "eager_ms": 0.022720000743865966,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.03125,
+        "max_tol_units": 0.3322259187698364,
+        "atol_eff": 0.05,
+        "rtol": 0.01,
+        "time_ms": 0.018010239601135253
+      },
+      "kernelagent_triton_opt": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.03125,
+        "max_tol_units": 0.3322259187698364,
+        "atol_eff": 0.05,
+        "rtol": 0.01,
+        "time_ms": 0.01841920018196106
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.03125,
+        "max_tol_units": 0.3058103919029236,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.021285760402679443
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.03125,
+        "max_tol_units": 0.3322259187698364,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.024727039337158203
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 87.31% matched memory control; tighter roofline not established",
+        "time_ms": 0.016576000452041627
+      }
+    },
+    "622c35f5d1c6": {
+      "eager_ms": 3.9131265258789063,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "pointwise",
+        "max_abs_err": 6.103515625e-05,
+        "max_tol_units": 0.0007628603489138186,
+        "atol_eff": 0.08,
+        "rtol": 0.001,
+        "time_ms": 0.9357644653320313
+      },
+      "kernelagent_triton_opt": {
+        "status": "SKIP",
+        "reason": "no optimized_kernel.py"
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "pointwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS",
+        "time_ms": 1.1651411437988282
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "pointwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS",
+        "time_ms": 1.0774041748046874
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: HBM 90.84% sustained peak (NCU), 7.20 TB/s",
+        "time_ms": 0.8654975891113281
+      }
+    },
+    "71f1d2c9f38b": {
+      "eager_ms": 5.0332269287109375,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "pointwise",
+        "max_abs_err": 2.193450927734375e-05,
+        "max_tol_units": 0.00023774272995069623,
+        "atol_eff": 0.08,
+        "rtol": 0.001,
+        "time_ms": 0.8515398406982422
+      },
+      "kernelagent_triton_opt": {
+        "status": "PASS",
+        "tol_tier": "pointwise",
+        "max_abs_err": 2.193450927734375e-05,
+        "max_tol_units": 0.00023774272995069623,
+        "atol_eff": 0.08,
+        "rtol": 0.001,
+        "time_ms": 0.8507622528076172
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "pointwise",
+        "max_abs_err": 9.5367431640625e-07,
+        "max_tol_units": 1.033666376315523e-05,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 1.0737875366210938
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "pointwise",
+        "max_abs_err": 1.9073486328125e-06,
+        "max_tol_units": 2.0673280232585967e-05,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 1.0829625701904297
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 75.66% scheduler issue capacity (NCU); roofline incomplete",
+        "time_ms": 0.5172639846801758
+      }
+    },
+    "7815074de963": {
+      "eager_ms": 0.3925267028808594,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.0625,
+        "max_tol_units": 0.3048780560493469,
+        "atol_eff": 0.125,
+        "rtol": 0.01,
+        "time_ms": 0.13013248443603515
+      },
+      "kernelagent_triton_opt": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.0625,
+        "max_tol_units": 0.3048780560493469,
+        "atol_eff": 0.125,
+        "rtol": 0.01,
+        "time_ms": 0.13022463798522949
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.0625,
+        "max_tol_units": 0.3048780560493469,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.13599424362182616
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.0625,
+        "max_tol_units": 0.3048780560493469,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.1334540843963623
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 95.86% full-traffic memory control; copy stage DRAM 83.27% peak",
+        "time_ms": 0.12010047912597656
+      }
+    },
+    "7884328a5557": {
+      "eager_ms": 0.052921600341796875,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.0625,
+        "max_tol_units": 0.4385964870452881,
+        "atol_eff": 0.0625,
+        "rtol": 0.01,
+        "time_ms": 0.026747519969940185
+      },
+      "kernelagent_triton_opt": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.0625,
+        "max_tol_units": 0.4385964870452881,
+        "atol_eff": 0.0625,
+        "rtol": 0.01,
+        "time_ms": 0.026316800117492677
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.0625,
+        "max_tol_units": 0.4385964870452881,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.029718399047851562
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.0625,
+        "max_tol_units": 0.4385964870452881,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.02973759889602661
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 95.85% matched memory control; mixed HBM/L2 access",
+        "time_ms": 0.025662720203399658
+      }
+    },
+    "7e38211c7f1c": {
+      "eager_ms": 0.03492543935775757,
+      "kernelagent_triton": {
+        "status": "SKIP",
+        "reason": "no kernel.py"
+      },
+      "kernelagent_triton_opt": {
+        "status": "SKIP",
+        "reason": "no optimized_kernel.py"
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS",
+        "time_ms": 0.030133121013641358
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS",
+        "time_ms": 0.025893759727478028
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 88.52% matched memory control; tighter roofline not established",
+        "time_ms": 0.004163840115070343
+      }
+    },
+    "8e33a91b7364": {
+      "eager_ms": 1.1073426818847656,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.0625,
+        "max_tol_units": 0.3048780560493469,
+        "atol_eff": 0.125,
+        "rtol": 0.01,
+        "time_ms": 0.32881473541259765
+      },
+      "kernelagent_triton_opt": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.0625,
+        "max_tol_units": 0.3048780560493469,
+        "atol_eff": 0.125,
+        "rtol": 0.01,
+        "time_ms": 0.3290201568603516
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.0625,
+        "max_tol_units": 0.3048780560493469,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.3248812866210937
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.0625,
+        "max_tol_units": 0.3048780560493469,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.3248006439208984
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 98.45% full-traffic memory control; copy stage DRAM 88.17% peak",
+        "time_ms": 0.32684864044189454
+      }
+    },
+    "94985bdb7630": {
+      "eager_ms": 0.39281406402587893,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.0625,
+        "max_tol_units": 0.3048780560493469,
+        "atol_eff": 0.125,
+        "rtol": 0.01,
+        "time_ms": 0.1301696014404297
+      },
+      "kernelagent_triton_opt": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.0625,
+        "max_tol_units": 0.3048780560493469,
+        "atol_eff": 0.125,
+        "rtol": 0.01,
+        "time_ms": 0.21664512634277344
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.0625,
+        "max_tol_units": 0.3048780560493469,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.13562047958374024
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.0625,
+        "max_tol_units": 0.3048780560493469,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.1332038402557373
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 95.86% full-traffic memory control; copy stage DRAM 83.27% peak",
+        "time_ms": 0.11985024452209472
+      }
+    },
+    "97032595d968": {
+      "eager_ms": 0.21755327224731447,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.015625,
+        "max_tol_units": 0.22172947227954865,
+        "atol_eff": 0.05,
+        "rtol": 0.01,
+        "time_ms": 0.04887296199798584
+      },
+      "kernelagent_triton_opt": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.015625,
+        "max_tol_units": 0.22172947227954865,
+        "atol_eff": 0.05,
+        "rtol": 0.01,
+        "time_ms": 0.042746877670288085
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS",
+        "time_ms": 0.15178560256958007
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS",
+        "time_ms": 0.16923391342163085
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 99.41% matched memory control; mixed HBM/L2 access",
+        "time_ms": 0.02560767889022827
+      }
+    },
+    "c68dae22972b": {
+      "eager_ms": 0.18828607559204102,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "pointwise",
+        "max_abs_err": 0.125,
+        "max_tol_units": 0.8849557638168335,
+        "atol_eff": 0.125,
+        "rtol": 0.001,
+        "time_ms": 0.09706815719604492
+      },
+      "kernelagent_triton_opt": {
+        "status": "PASS",
+        "tol_tier": "pointwise",
+        "max_abs_err": 0.125,
+        "max_tol_units": 0.8849557638168335,
+        "atol_eff": 0.125,
+        "rtol": 0.001,
+        "time_ms": 0.12203200340270996
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "pointwise",
+        "max_abs_err": 0.125,
+        "max_tol_units": 0.8849557638168335,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.10386624336242675
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "pointwise",
+        "max_abs_err": 0.125,
+        "max_tol_units": 0.8849557638168335,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.10386752128601075
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: HBM 87.97% sustained peak; 99.51% matched memory control",
+        "time_ms": 0.09698623657226563
+      }
+    },
+    "c8c60d8f7015": {
+      "eager_ms": 0.2106284713745117,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.03125,
+        "max_tol_units": 0.3344481587409973,
+        "atol_eff": 0.05,
+        "rtol": 0.01,
+        "time_ms": 0.1675187110900879
+      },
+      "kernelagent_triton_opt": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.03125,
+        "max_tol_units": 0.3344481587409973,
+        "atol_eff": 0.05,
+        "rtol": 0.01,
+        "time_ms": 0.032719359397888184
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS",
+        "time_ms": 0.15158528327941895
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS",
+        "time_ms": 0.16911615371704103
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 99.35% matched memory control; mixed HBM/L2 access",
+        "time_ms": 0.025428481101989746
+      }
+    },
+    "d8f596b3df34": {
+      "eager_ms": 0.1475500774383545,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 1.59942626953125,
+        "max_tol_units": 0.2438504546880722,
+        "atol_eff": 1.42315673828125,
+        "rtol": 0.01,
+        "time_ms": 0.20149311065673828
+      },
+      "kernelagent_triton_opt": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 1.59918212890625,
+        "max_tol_units": 0.24386562407016754,
+        "atol_eff": 1.42315673828125,
+        "rtol": 0.01,
+        "time_ms": 0.12584192276000977
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 1.545257568359375,
+        "max_tol_units": 0.5701869130134583,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.07146880149841309
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 1.5452880859375,
+        "max_tol_units": 0.5701895356178284,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.059978880882263184
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 59.7% of compulsory-traffic bandwidth bound; roofline incomplete",
+        "time_ms": 0.0820364761352539
+      }
+    },
+    "e29b92927600": {
+      "eager_ms": 0.03500672101974487,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "atol_eff": 0.05,
+        "rtol": 0.01,
+        "time_ms": 0.007967360019683838
+      },
+      "kernelagent_triton_opt": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "atol_eff": 0.05,
+        "rtol": 0.01,
+        "time_ms": 0.00469760000705719
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS",
+        "time_ms": 0.026344959735870362
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "complex",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS",
+        "time_ms": 0.030563840866088866
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 88.03% matched memory control; tighter roofline not established",
+        "time_ms": 0.00412416011095047
+      }
+    },
+    "f4e9e58fef73": {
+      "eager_ms": 0.022739200592041015,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.03125,
+        "max_tol_units": 0.3322259187698364,
+        "atol_eff": 0.05,
+        "rtol": 0.01,
+        "time_ms": 0.03088576078414917
+      },
+      "kernelagent_triton_opt": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.03125,
+        "max_tol_units": 0.3322259187698364,
+        "atol_eff": 0.05,
+        "rtol": 0.01,
+        "time_ms": 0.024501121044158934
+      },
+      "torch_compile": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.03125,
+        "max_tol_units": 0.3058103919029236,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.021346559524536134
+      },
+      "torch_compile_max_autotune": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.03125,
+        "max_tol_units": 0.3322259187698364,
+        "note": "3 seeds; bitwise FAIL; memory PASS",
+        "time_ms": 0.024623360633850098
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 87.56% matched memory control; tighter roofline not established",
+        "time_ms": 0.017230080366134645
+      }
+    },
+    "f6251e84e3fa": {
+      "eager_ms": 1.917115478515625,
+      "kernelagent_triton": {
+        "status": "PASS",
+        "tol_tier": "reduction",
+        "max_abs_err": 0.5,
+        "max_tol_units": 0.7246376872062683,
+        "atol_eff": 0.05,
+        "rtol": 0.01,
+        "time_ms": 0.469736328125
+      },
+      "kernelagent_triton_opt": {
+        "status": "SKIP",
+        "reason": "no optimized_kernel.py"
+      },
+      "torch_compile": {
+        "status": "FAIL",
+        "tol_tier": "reduction",
+        "max_abs_err": 2.0379638671875,
+        "max_tol_units": 19.757347106933594,
+        "note": "3 seeds; bitwise FAIL; memory FAIL; numerical tolerance exceeded",
+        "time_ms": 0.9390777587890625
+      },
+      "torch_compile_max_autotune": {
+        "status": "FAIL",
+        "tol_tier": "reduction",
+        "max_abs_err": 2.0379638671875,
+        "max_tol_units": 19.757347106933594,
+        "note": "3 seeds; bitwise FAIL; memory FAIL; numerical tolerance exceeded",
+        "time_ms": 0.9390380859375
+      },
+      "simple_prompt_kernel": {
+        "status": "PASS",
+        "tol_tier": "bitwise",
+        "max_abs_err": 0.0,
+        "max_tol_units": 0.0,
+        "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: Full function 72.00% of compulsory memory control; zero-output phase HBM 94.92% sustained peak; roofline not established",
+        "time_ms": 0.44192512512207033
+      }
+    }
+  },
+  "measurement_environment": {
+    "gpu": "NVIDIA GB300",
+    "physical_gpus": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "torch": "2.13.0+cu130",
+    "triton": "3.7.1",
+    "cuda": "13.0",
+    "started_utc": "2026-10-15T02:29:49Z",
+    "finished_utc": "2026-10-15T02:34:07Z",
+    "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2"
+  },
+  "measurement_variation_ms": {
+    "12545c1e9b06": {
+      "eager": {
+        "minimum_ms": 0.2551948738098144,
+        "maximum_ms": 0.25540800094604493
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.08829055786132813,
+        "maximum_ms": 0.08841407775878907
+      },
+      "kernelagent_triton_opt": {
+        "minimum_ms": 0.08542336463928223,
+        "maximum_ms": 0.08566975593566895
+      },
+      "torch_compile": {
+        "minimum_ms": 0.08902655601501465,
+        "maximum_ms": 0.08911040306091308
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.08534144401550293,
+        "maximum_ms": 0.085546236038208
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.06723455905914306,
+        "maximum_ms": 0.06736000061035156
+      }
+    },
+    "385e1beb9bb9": {
+      "eager": {
+        "minimum_ms": 0.3165663909912109,
+        "maximum_ms": 0.3166860771179199
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.1921049690246582,
+        "maximum_ms": 0.1922323226928711
+      },
+      "kernelagent_triton_opt": {
+        "minimum_ms": 0.19436288833618165,
+        "maximum_ms": 0.19473024368286132
+      },
+      "torch_compile": {
+        "minimum_ms": 0.195098876953125,
+        "maximum_ms": 0.195467529296875
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.19534528732299805,
+        "maximum_ms": 0.19563840866088866
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.1956319999694824,
+        "maximum_ms": 0.1959667205810547
+      }
+    },
+    "3c6c589cdf81": {
+      "eager": {
+        "minimum_ms": 0.1715679931640625,
+        "maximum_ms": 0.17173120498657227
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.2640070343017578,
+        "maximum_ms": 0.26409664154052737
+      },
+      "kernelagent_triton_opt": {
+        "minimum_ms": 0.14107263565063477,
+        "maximum_ms": 0.14156415939331055
+      },
+      "torch_compile": {
+        "minimum_ms": 0.13255295753479004,
+        "maximum_ms": 0.13275839805603026
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.1310374355316162,
+        "maximum_ms": 0.1312831974029541
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.09583295822143555,
+        "maximum_ms": 0.09607808113098144
+      }
+    },
+    "43f0c930291e": {
+      "eager": {
+        "minimum_ms": 0.1798784065246582,
+        "maximum_ms": 0.1802047920227051
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.12959872245788573,
+        "maximum_ms": 0.1298528003692627
+      },
+      "torch_compile": {
+        "minimum_ms": 0.08185855865478515,
+        "maximum_ms": 0.08210751533508301
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.0709984016418457,
+        "maximum_ms": 0.07133376121520996
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.10451071739196777,
+        "maximum_ms": 0.104716796875
+      }
+    },
+    "493cad38cac9": {
+      "eager": {
+        "minimum_ms": 0.16247488021850587,
+        "maximum_ms": 0.16259775161743165
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.13283904075622557,
+        "maximum_ms": 0.13284223556518554
+      },
+      "kernelagent_triton_opt": {
+        "minimum_ms": 0.02163327932357788,
+        "maximum_ms": 0.02173759937286377
+      },
+      "torch_compile": {
+        "minimum_ms": 0.10748671531677247,
+        "maximum_ms": 0.10765119552612305
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.12726911544799804,
+        "maximum_ms": 0.1273529624938965
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.018294399976730345,
+        "maximum_ms": 0.01841920018196106
+      }
+    },
+    "4b90e2d83144": {
+      "eager": {
+        "minimum_ms": 0.022659199237823488,
+        "maximum_ms": 0.02446079969406128
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.01796736001968384,
+        "maximum_ms": 0.0183788800239563
+      },
+      "kernelagent_triton_opt": {
+        "minimum_ms": 0.017968640327453614,
+        "maximum_ms": 0.018705919981002808
+      },
+      "torch_compile": {
+        "minimum_ms": 0.021203839778900148,
+        "maximum_ms": 0.02138943910598755
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.024664959907531737,
+        "maximum_ms": 0.024829440116882324
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.01649407982826233,
+        "maximum_ms": 0.016739200353622436
+      }
+    },
+    "622c35f5d1c6": {
+      "eager": {
+        "minimum_ms": 3.9124710083007814,
+        "maximum_ms": 3.913699951171875
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.9256063842773438,
+        "maximum_ms": 0.9468236541748047
+      },
+      "torch_compile": {
+        "minimum_ms": 1.164771194458008,
+        "maximum_ms": 1.1655091094970702
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 1.0767481231689453,
+        "maximum_ms": 1.0783878326416017
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.8651302337646485,
+        "maximum_ms": 0.865700454711914
+      }
+    },
+    "71f1d2c9f38b": {
+      "eager": {
+        "minimum_ms": 5.032703857421875,
+        "maximum_ms": 5.033438110351563
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.8506790161132812,
+        "maximum_ms": 0.8521126556396484
+      },
+      "kernelagent_triton_opt": {
+        "minimum_ms": 0.8498585510253907,
+        "maximum_ms": 0.8510950469970703
+      },
+      "torch_compile": {
+        "minimum_ms": 1.0731737518310547,
+        "maximum_ms": 1.0752620697021484
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 1.082389144897461,
+        "maximum_ms": 1.0841996765136719
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.5142335891723633,
+        "maximum_ms": 0.5194432067871094
+      }
+    },
+    "7815074de963": {
+      "eager": {
+        "minimum_ms": 0.39202816009521485,
+        "maximum_ms": 0.39490623474121095
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.12993151664733887,
+        "maximum_ms": 0.13018367767333985
+      },
+      "kernelagent_triton_opt": {
+        "minimum_ms": 0.13001343727111817,
+        "maximum_ms": 0.13034111976623536
+      },
+      "torch_compile": {
+        "minimum_ms": 0.1359116840362549,
+        "maximum_ms": 0.13607359886169434
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.13333696365356446,
+        "maximum_ms": 0.13349056243896484
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.11977343559265137,
+        "maximum_ms": 0.1203007984161377
+      }
+    },
+    "7884328a5557": {
+      "eager": {
+        "minimum_ms": 0.05287744045257568,
+        "maximum_ms": 0.053082880973815916
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.026687359809875487,
+        "maximum_ms": 0.0268505597114563
+      },
+      "kernelagent_triton_opt": {
+        "minimum_ms": 0.026256000995635985,
+        "maximum_ms": 0.026586239337921144
+      },
+      "torch_compile": {
+        "minimum_ms": 0.029697279930114746,
+        "maximum_ms": 0.029799680709838867
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.029676799774169923,
+        "maximum_ms": 0.029779200553894044
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.025600640773773192,
+        "maximum_ms": 0.02572416067123413
+      }
+    },
+    "7e38211c7f1c": {
+      "eager": {
+        "minimum_ms": 0.03488447904586792,
+        "maximum_ms": 0.034966399669647215
+      },
+      "torch_compile": {
+        "minimum_ms": 0.03006655931472778,
+        "maximum_ms": 0.03019455909729004
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.02580672025680542,
+        "maximum_ms": 0.025935359001159668
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.004142720103263855,
+        "maximum_ms": 0.004185599982738495
+      }
+    },
+    "8e33a91b7364": {
+      "eager": {
+        "minimum_ms": 1.1072589111328126,
+        "maximum_ms": 1.1073817443847656
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.32869438171386717,
+        "maximum_ms": 0.32914176940917966
+      },
+      "kernelagent_triton_opt": {
+        "minimum_ms": 0.32889537811279296,
+        "maximum_ms": 0.3294291305541992
+      },
+      "torch_compile": {
+        "minimum_ms": 0.32479999542236326,
+        "maximum_ms": 0.32492416381835937
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.324758415222168,
+        "maximum_ms": 0.3248825454711914
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.32664382934570313,
+        "maximum_ms": 0.3269715118408203
+      }
+    },
+    "94985bdb7630": {
+      "eager": {
+        "minimum_ms": 0.39252094268798826,
+        "maximum_ms": 0.39313919067382813
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.13000767707824706,
+        "maximum_ms": 0.1302950382232666
+      },
+      "kernelagent_triton_opt": {
+        "minimum_ms": 0.21646976470947266,
+        "maximum_ms": 0.2167692756652832
+      },
+      "torch_compile": {
+        "minimum_ms": 0.13554431915283202,
+        "maximum_ms": 0.13570176124572753
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.133123197555542,
+        "maximum_ms": 0.13329279899597168
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.11959808349609374,
+        "maximum_ms": 0.1199449634552002
+      }
+    },
+    "97032595d968": {
+      "eager": {
+        "minimum_ms": 0.21750463485717775,
+        "maximum_ms": 0.21763519287109376
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.0488262414932251,
+        "maximum_ms": 0.048913922309875485
+      },
+      "kernelagent_triton_opt": {
+        "minimum_ms": 0.04272511959075928,
+        "maximum_ms": 0.04281087875366211
+      },
+      "torch_compile": {
+        "minimum_ms": 0.15169535636901854,
+        "maximum_ms": 0.15186688423156738
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.16915071487426758,
+        "maximum_ms": 0.16932096481323242
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.02558527946472168,
+        "maximum_ms": 0.02564863920211792
+      }
+    },
+    "c68dae22972b": {
+      "eager": {
+        "minimum_ms": 0.18824319839477538,
+        "maximum_ms": 0.18947391510009765
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.09698623657226563,
+        "maximum_ms": 0.09744383811950684
+      },
+      "kernelagent_triton_opt": {
+        "minimum_ms": 0.12199104309082032,
+        "maximum_ms": 0.1228934383392334
+      },
+      "torch_compile": {
+        "minimum_ms": 0.10378496170043945,
+        "maximum_ms": 0.10434816360473632
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.10382399559020997,
+        "maximum_ms": 0.10407936096191406
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.09694208145141602,
+        "maximum_ms": 0.09756671905517578
+      }
+    },
+    "c8c60d8f7015": {
+      "eager": {
+        "minimum_ms": 0.21054784774780275,
+        "maximum_ms": 0.21074943542480468
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.16690303802490233,
+        "maximum_ms": 0.1675596809387207
+      },
+      "kernelagent_triton_opt": {
+        "minimum_ms": 0.032675840854644776,
+        "maximum_ms": 0.03276031970977783
+      },
+      "torch_compile": {
+        "minimum_ms": 0.15150208473205568,
+        "maximum_ms": 0.15166720390319824
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.16899328231811522,
+        "maximum_ms": 0.16919807434082032
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.025386879444122313,
+        "maximum_ms": 0.025470080375671385
+      }
+    },
+    "d8f596b3df34": {
+      "eager": {
+        "minimum_ms": 0.14736512184143066,
+        "maximum_ms": 0.14761280059814452
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.2012076759338379,
+        "maximum_ms": 0.20174144744873046
+      },
+      "kernelagent_triton_opt": {
+        "minimum_ms": 0.12576000213623048,
+        "maximum_ms": 0.12600576400756835
+      },
+      "torch_compile": {
+        "minimum_ms": 0.07138624191284179,
+        "maximum_ms": 0.07154943943023681
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.059896321296691896,
+        "maximum_ms": 0.06006080150604248
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.08195327758789063,
+        "maximum_ms": 0.08215935707092285
+      }
+    },
+    "e29b92927600": {
+      "eager": {
+        "minimum_ms": 0.034966399669647215,
+        "maximum_ms": 0.035029120445251465
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.007930880188941955,
+        "maximum_ms": 0.007975680232048034
+      },
+      "kernelagent_triton_opt": {
+        "minimum_ms": 0.004695680141448975,
+        "maximum_ms": 0.004739199876785278
+      },
+      "torch_compile": {
+        "minimum_ms": 0.026302080154418945,
+        "maximum_ms": 0.026384639739990234
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.03054208040237427,
+        "maximum_ms": 0.03060544013977051
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.004120320081710815,
+        "maximum_ms": 0.004166400134563446
+      }
+    },
+    "f4e9e58fef73": {
+      "eager": {
+        "minimum_ms": 0.02269824028015137,
+        "maximum_ms": 0.02413183927536011
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.03060352087020874,
+        "maximum_ms": 0.030931200981140137
+      },
+      "kernelagent_triton_opt": {
+        "minimum_ms": 0.024479360580444337,
+        "maximum_ms": 0.02458240032196045
+      },
+      "torch_compile": {
+        "minimum_ms": 0.02128511905670166,
+        "maximum_ms": 0.02138751983642578
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.024561920166015626,
+        "maximum_ms": 0.024664320945739747
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.01718847990036011,
+        "maximum_ms": 0.017230720520019532
+      }
+    },
+    "f6251e84e3fa": {
+      "eager": {
+        "minimum_ms": 1.9167897033691406,
+        "maximum_ms": 1.9175686645507812
+      },
+      "kernelagent_triton": {
+        "minimum_ms": 0.46937023162841796,
+        "maximum_ms": 0.4700249481201172
+      },
+      "torch_compile": {
+        "minimum_ms": 0.9388307189941406,
+        "maximum_ms": 0.9397747039794921
+      },
+      "torch_compile_max_autotune": {
+        "minimum_ms": 0.9388320159912109,
+        "maximum_ms": 0.9392428588867188
+      },
+      "simple_prompt_kernel": {
+        "minimum_ms": 0.4416793441772461,
+        "maximum_ms": 0.44216896057128907
+      }
+    }
+  },
+  "prior_simple_validation": {
+    "source_matched": true,
+    "cases": 161,
+    "bitwise_passes": 20,
+    "memory_passes": 20,
+    "roofline_not_established": [
+      "3c6c589cdf81",
+      "43f0c930291e",
+      "4b90e2d83144",
+      "71f1d2c9f38b",
+      "7e38211c7f1c",
+      "d8f596b3df34",
+      "e29b92927600",
+      "f4e9e58fef73",
+      "f6251e84e3fa"
+    ]
+  },
+  "per_problem_measurements": {
+    "12545c1e9b06": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-7fcb955a-7340-efcd-e07d-9efeea97b7c5",
+        "physical_gpu": 0,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:32:11Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "kernel.py": "5c590ff0efd60a1af1dcd5286a6fbeaca1767af135b83303208a6e182c6abd52",
+          "optimized_kernel.py": "6aea8335743b265de6b118aacb95f23d2f0263fe4a73bf3bbaef01f4d3522b20",
+          "problem.py": "7d795fbaca0f38ce5b1381cbee17187c9adc049bb8911f527526e343c1332e35",
+          "simple_prompt_kernel.py": "018b1e5cbca7784df467b6e825c2465852d5fe8a625bb92a24dd0c36fcc89021"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.05,
+          "rtol": 0.01,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": false,
+          "memory": false
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": false,
+          "memory": false
+        },
+        "torch_compile": {
+          "bitwise": true,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": false,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "385e1beb9bb9": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-d4397fa6-3923-d5d0-dad5-7d37df164a46",
+        "physical_gpu": 2,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:32:13Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "problem.py": "29d5b00e0fab918548955e20c5f815f249deb805194b1862b821a674cdc01458",
+          "kernel.py": "0db8139c1fa7d1f9b991cc45f7bfd53a2d0ee4295bafda4a8b1088fdea2a2f9b",
+          "optimized_kernel.py": "02f4bbe9f5edafc3d14f604bab412c9d60de1c6afb047b1f1ea94988700cd8d3",
+          "simple_prompt_kernel.py": "9771b1deeecb9d34976629c7536596fcaa5ee753199d429ccd2934284f65d11f"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.125,
+          "rtol": 0.001,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": false,
+          "memory": true
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": false,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "3c6c589cdf81": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-c4144bf8-758d-198a-1e5b-3d666ee8c2e3",
+        "physical_gpu": 3,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:32:37Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "optimized_kernel.py": "fbbaa223e132c2594bad756849f5fd896c42cd47fcdd32d8a46ff795c1e20037",
+          "problem.py": "f718b31c71c785e2ec950bae4eb1f533e892fb600b7cbe9c06bc461a61281f51",
+          "kernel.py": "7823a9fb5c27be62ca10ef81249674e9828b0048367005cd32847ecb706788a6",
+          "simple_prompt_kernel.py": "489a5fc752d89d62fc26e9e105c9dacc559ecd5a9e94d0f1ddf1914cb2620eb9"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 1.221923828125,
+          "rtol": 0.01,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": false,
+          "memory": false
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": false,
+          "memory": false
+        },
+        "torch_compile": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": false,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "43f0c930291e": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-7fcb955a-7340-efcd-e07d-9efeea97b7c5",
+        "physical_gpu": 0,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:31:12Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "kernel.py": "85828b2a283c217f5daab71e8b8c8b526d53f20a7771e2fc9e3305a9bae7372a",
+          "problem.py": "fb26da60eccbbf632157799833cc4cf45a4f8757cd5f43573138970eb9392fe3",
+          "simple_prompt_kernel.py": "430499b447a30572fb2d1f4dfea714d732eaaa5b1793ca478c9f6d9a306255e9"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.05,
+          "rtol": 0.01,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": false,
+          "memory": true
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": null,
+          "memory": null
+        },
+        "torch_compile": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": false,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "493cad38cac9": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-fdbf8a3d-db0e-9551-c2a5-31d2547c14bc",
+        "physical_gpu": 1,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:32:37Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "kernel.py": "137ec175cc7639a1ff810dc08d8eaeae8da6d810ed626fdaa9551d84c007addf",
+          "optimized_kernel.py": "180b4be2607c43a58ab46a63d317085139b4795cac611fefd2344b28df4f6229",
+          "problem.py": "313a1c1914f941ee1f5a7d06ec68a7120e1f2d05dc855ae0605a233b4d94b13c",
+          "simple_prompt_kernel.py": "6ab0940674bc3097f2815f1e02aa6191da01df1e22dc8ffb394872634312c64a"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.05,
+          "rtol": 0.01,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": true,
+          "memory": true
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile": {
+          "bitwise": true,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": true,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "4b90e2d83144": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-d4397fa6-3923-d5d0-dad5-7d37df164a46",
+        "physical_gpu": 2,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:32:43Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "problem.py": "e39578e9849eead3293e6b4c50930df08dfb6ff5d0a1469339c09f7e90d77792",
+          "kernel.py": "116cba23d4316bdf6ab2e72688da6f50cd7415f3dc2ca37f15db6e3dc020b46e",
+          "optimized_kernel.py": "116cba23d4316bdf6ab2e72688da6f50cd7415f3dc2ca37f15db6e3dc020b46e",
+          "simple_prompt_kernel.py": "1ec46d17e3a79d189eba41fc7d0d6345534df18cdb3baf4e8dbf6dde814b8dd3"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.05,
+          "rtol": 0.01,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": false,
+          "memory": false
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": false,
+          "memory": false
+        },
+        "torch_compile": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": false,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "622c35f5d1c6": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-fdbf8a3d-db0e-9551-c2a5-31d2547c14bc",
+        "physical_gpu": 1,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:32:05Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "problem.py": "e394d5d424b89b99694c3c05835bef8ede5b18c50ebcb4d88418433d44c4f9ad",
+          "kernel.py": "29f34005234a8396a22c14f02008e8aab4ec87d0fac6b063e1bfd8eac84c8e90",
+          "simple_prompt_kernel.py": "24c713617bcc0c2b07341114b88bd42c1fc8587e3f51c83cdffd1fdf5f847778"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.08,
+          "rtol": 0.001,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": false,
+          "memory": true
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": null,
+          "memory": null
+        },
+        "torch_compile": {
+          "bitwise": true,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": true,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "71f1d2c9f38b": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-c4144bf8-758d-198a-1e5b-3d666ee8c2e3",
+        "physical_gpu": 3,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:31:51Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "optimized_kernel.py": "49a393cda380e674ad47b06ae9969ad1b33f6df7b30cd8c70c2f18360403eec6",
+          "problem.py": "fcebf7c4aabaf7fcfa52640677c813a0e95ff0cb2040691f339d367a9a2c5b58",
+          "kernel.py": "49a393cda380e674ad47b06ae9969ad1b33f6df7b30cd8c70c2f18360403eec6",
+          "simple_prompt_kernel.py": "1ef0ef2c78b4c22bc45747350ac69cf171ad28d407c0325042d78b80e085d3b9"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.08,
+          "rtol": 0.001,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": false,
+          "memory": true
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": false,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "7815074de963": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-7fcb955a-7340-efcd-e07d-9efeea97b7c5",
+        "physical_gpu": 0,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:33:04Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "kernel.py": "b9f23e25a9ea468f5ad4440f3237876d9b7fc4ff5c4017948c28b3121547030a",
+          "optimized_kernel.py": "7ad02984da1521845e9255c8a394b9261e2d4151f7d36f050d6b36fc1f38146d",
+          "problem.py": "91ddcb465a1ed1d704d992864f9688cf3d0887961ab8a65d7b42ddcf560cb789",
+          "simple_prompt_kernel.py": "ac262829f735fee774e0b0f6209f6cc89b9d31bfb30ef9401c3f6b86f0fac3e0"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.125,
+          "rtol": 0.01,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": false,
+          "memory": false
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": false,
+          "memory": false
+        },
+        "torch_compile": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": false,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "7884328a5557": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-fdbf8a3d-db0e-9551-c2a5-31d2547c14bc",
+        "physical_gpu": 1,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:33:12Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "problem.py": "348313e63309bf0c9c6acb52a3b0c942438e6b88e167fead4c8924f726a3ddd2",
+          "kernel.py": "d475a8e5db05b23f3724d8917e247220104b18675f3714b48eb10f4d12684f7c",
+          "optimized_kernel.py": "be0e3c4dd98b092ff71822f2a478ed0c50ecaefbd730bf20dd305f0a5c057b42",
+          "simple_prompt_kernel.py": "e51acbc4e28b668bc346df71483992468fa74f77f3d024efa9a2e8292f410337"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.0625,
+          "rtol": 0.01,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": false,
+          "memory": false
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": false,
+          "memory": false
+        },
+        "torch_compile": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": false,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "7e38211c7f1c": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-c4144bf8-758d-198a-1e5b-3d666ee8c2e3",
+        "physical_gpu": 3,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:33:02Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "problem.py": "80ee25fac2fbbda8c4a32e169c9c5c255a2039862f33b17a932b231f6a153c9f",
+          "simple_prompt_kernel.py": "fa461d2adb46b13bbeee98170588071cd3a7fc2e20fa93cc5499b8d754de4fc6"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.05,
+          "rtol": 0.01,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": null,
+          "memory": null
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": null,
+          "memory": null
+        },
+        "torch_compile": {
+          "bitwise": true,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": true,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "8e33a91b7364": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-d4397fa6-3923-d5d0-dad5-7d37df164a46",
+        "physical_gpu": 2,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:33:34Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "kernel.py": "3d6f0a8b1e75350b99dad1085c96c39bc66479d8a03ab5c1565a5a891393741b",
+          "optimized_kernel.py": "3d6f0a8b1e75350b99dad1085c96c39bc66479d8a03ab5c1565a5a891393741b",
+          "problem.py": "d81c122938c53c2b7b20c8afa8d230295288feedb22498760f8170564619c8cb",
+          "simple_prompt_kernel.py": "d9d634813e93148cb7940a83a215f5df5eeb85d3c2dc39252f7098bb03cac5ae"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.125,
+          "rtol": 0.01,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": false,
+          "memory": false
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": false,
+          "memory": false
+        },
+        "torch_compile": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": false,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "94985bdb7630": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-c4144bf8-758d-198a-1e5b-3d666ee8c2e3",
+        "physical_gpu": 3,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:33:40Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "problem.py": "ae22a8d21c215b2a3602c377a00c558c182072dbe4557c77d9c13f84f0201b6a",
+          "kernel.py": "f08b97d358f08e5d6e44a3afc802f305f18f9c2ce5d22c052f4b2322fdbbe5ff",
+          "optimized_kernel.py": "4a682dac24a42ce13009dc684d66abb03e34b297ae66664590564c065ceddb36",
+          "simple_prompt_kernel.py": "53a7d42e63ad76392730ce65854a9ab6f3c0d363a43e46973820c0c95d1c0d78"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.125,
+          "rtol": 0.01,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": false,
+          "memory": false
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": false,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "97032595d968": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-7fcb955a-7340-efcd-e07d-9efeea97b7c5",
+        "physical_gpu": 0,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:33:31Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "optimized_kernel.py": "82137a4ef275a8052e44519fcfcde0866351d0577dc376ef05095f80fc8b5db9",
+          "problem.py": "60fdc8191c030272316692e652ca50beccaef816e7a8e4c37e8e9c27de4267d7",
+          "kernel.py": "c7a597c46d662837c9fde60444709c81a7aeadea7e8079e39ead074bc85ade41",
+          "simple_prompt_kernel.py": "0df68b349e495342c8b2a1300aefbe89f33d9d8471fd268257a94858949d81f2"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.05,
+          "rtol": 0.01,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": false,
+          "memory": true
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile": {
+          "bitwise": true,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": true,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "c68dae22972b": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-d4397fa6-3923-d5d0-dad5-7d37df164a46",
+        "physical_gpu": 2,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:30:18Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "problem.py": "048fb52ab11625235f9a6824649bd74fd476c0ee39963607cdd21aa5946908ba",
+          "kernel.py": "529cdf13ca000269a7154e77fb0233ff8a0983caa6b4c675f56a169c9d9ea0da",
+          "optimized_kernel.py": "6f7aecafcde0208eadce770f4984b9ee1bcf258352a89bf011679a4fea896194",
+          "simple_prompt_kernel.py": "89b8cbf14606b5d93d30620fd1696a9de11b81fc290f6558f1bac673269189a9"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.125,
+          "rtol": 0.001,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": false,
+          "memory": true
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": false,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "c8c60d8f7015": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-fdbf8a3d-db0e-9551-c2a5-31d2547c14bc",
+        "physical_gpu": 1,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:33:46Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "optimized_kernel.py": "19cdb7b8a8421870860588bad6d7d453a395462dbdbd3102cdd37b54151dbff2",
+          "problem.py": "c972878eceea20d2f259973fdc43583b6640fb78afa3a099e6a62e1551cbe43d",
+          "kernel.py": "d0981728eaf3fdda03a9ce044246e140bf3373f7c5ca5750018cfe6ed46e3fb1",
+          "simple_prompt_kernel.py": "715559cec5d6c833993400ea0184b95248970de583134f5a9dee897f8091bcf2"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.05,
+          "rtol": 0.01,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": false,
+          "memory": true
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile": {
+          "bitwise": true,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": true,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "d8f596b3df34": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-7fcb955a-7340-efcd-e07d-9efeea97b7c5",
+        "physical_gpu": 0,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:34:05Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "kernel.py": "a484b45ff893377d77b0a40e6d284997d1976b64a4d3dd1abadb3857a92b7bcf",
+          "optimized_kernel.py": "fc2550e1f1de6c0bc707e167ebace131bf91f8b0acd7c176dc478c7c13fc8e4b",
+          "problem.py": "30626127f40aaba8748453ec44e13e7cfc6a05b5865f3368fb6d2498b18e6bb5",
+          "simple_prompt_kernel.py": "6e34f1ca8f694fc950fb5a95872d1107fa59df3d55a9c7918c2131a61a39d5e5"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 1.42315673828125,
+          "rtol": 0.01,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": false,
+          "memory": true
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": false,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "e29b92927600": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-d4397fa6-3923-d5d0-dad5-7d37df164a46",
+        "physical_gpu": 2,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:33:53Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "problem.py": "83752fa599678cf1da9c59476a69e1295c5fd6aa2efd2009f62467b8d561ab56",
+          "kernel.py": "442488fedaedf3406b5dfacd9823c5bf481be24cd24bd419e797d4a0036572a7",
+          "optimized_kernel.py": "515022fb14fe65d3c7e7f0b2c77b362a3051e99bc70b7c7dc0a6be3af6915307",
+          "simple_prompt_kernel.py": "207731bfab3445d47a73b61fae09807c2da4232c2ae857dfe02fd0ab61e32bc3"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.05,
+          "rtol": 0.01,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": true,
+          "memory": true
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": true,
+          "memory": true
+        },
+        "torch_compile": {
+          "bitwise": true,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": true,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "f4e9e58fef73": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-c4144bf8-758d-198a-1e5b-3d666ee8c2e3",
+        "physical_gpu": 3,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:34:07Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "optimized_kernel.py": "0f9ad509bb9e96cd5c3eb495b4c9c130c76d8b73bdbdd4d40d2e0c6b1c2edb03",
+          "kernel.py": "561d4a3e9613bfb9914b46ed70b29da8ed2829ea4bba19074d33c8e4ae851bc8",
+          "problem.py": "ddf00ebb9668d504c1ac8bdf58b8d1cebf2e6ee52d4aecbc8e538dc1462a64b6",
+          "simple_prompt_kernel.py": "4f57b5f2c560a4bda6294d87b7f287dd433176fe1889d18da2fdd4cc05a7b772"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.05,
+          "rtol": 0.01,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": false,
+          "memory": true
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile": {
+          "bitwise": false,
+          "memory": true
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": false,
+          "memory": true
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    },
+    "f6251e84e3fa": {
+      "environment": {
+        "gpu": "NVIDIA GB300",
+        "gpu_uuid": "GPU-d4397fa6-3923-d5d0-dad5-7d37df164a46",
+        "physical_gpu": 2,
+        "compute_capability": [
+          10,
+          3
+        ],
+        "torch": "2.13.0+cu130",
+        "triton": "3.7.1",
+        "cuda": "13.0",
+        "driver": "580.126.20",
+        "timestamp_utc": "2026-10-15T02:31:25Z",
+        "source_commit": "8e038d9f4b15e6c8ee38c07417deda93d56c9cb2",
+        "source_sha256": {
+          "kernel.py": "6d55c5f819dce14734e549819019f83679d2b2a1076054ccaa62806a2237e47e",
+          "problem.py": "2a7211770e5982422e6991fca984c9b761a61276d6decdef89d6f7f2543c4c14",
+          "simple_prompt_kernel.py": "764c6938bba6c9016df7638052630d5339bc67393b55223d12610ab30430cae2"
+        },
+        "timing": {
+          "kind": "CUDA graph",
+          "calls_per_capture": 50,
+          "event_samples": 15,
+          "statistic": "median",
+          "function_warmups": 5,
+          "graph_warmups": 5,
+          "sample_warmup_replays": 1,
+          "backend_order": "rotated and reversed between event samples",
+          "compilation_in_timing": false,
+          "input_seed": 0,
+          "outputs": "released after each call",
+          "compile_api": "torch.compile(Model().eval(), backend='inductor', fullgraph=True, dynamic=False)",
+          "compile_options": {
+            "default": {
+              "max_autotune": false,
+              "triton.cudagraphs": false
+            },
+            "max_autotune": {
+              "max_autotune": true,
+              "triton.cudagraphs": false
+            }
+          }
+        },
+        "validation": {
+          "seeds": [
+            17,
+            113,
+            2027
+          ],
+          "candidate_calls_per_seed": 3,
+          "atol": 0.05,
+          "rtol": 0.01,
+          "numerical_rule": "torch.abs(actual.float() - expected.float()) <= atol + rtol * torch.abs(expected.float())",
+          "tolerance_source": "Existing kernelagent_triton atol_eff/rtol; 0.05/0.01 if absent; shared by all numerical baselines",
+          "bitwise_rule": "Raw uint8 equality for every output, including retained outputs after a later call",
+          "memory_rule": "Output metadata/aliases and retained-call aliases match eager; inputs unchanged; warmed peak allocation plus persistent allocation <= eager"
+        }
+      },
+      "parity": {
+        "kernelagent_triton": {
+          "bitwise": false,
+          "memory": true
+        },
+        "kernelagent_triton_opt": {
+          "bitwise": null,
+          "memory": null
+        },
+        "torch_compile": {
+          "bitwise": false,
+          "memory": false
+        },
+        "torch_compile_max_autotune": {
+          "bitwise": false,
+          "memory": false
+        },
+        "simple_prompt_kernel": {
+          "bitwise": true,
+          "memory": true
+        }
+      }
+    }
+  }
+}

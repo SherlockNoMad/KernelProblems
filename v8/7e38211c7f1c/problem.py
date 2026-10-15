@@ -44,7 +44,12 @@ class Model(torch.nn.Module):
 
 
 def get_inputs():
-    _scaled_dot_product_flash_attention_backward_31 = torch.randn([], dtype=torch.float32, device='cuda')
+    # Flash attention returns (grad_query, grad_key, grad_value).
+    _scaled_dot_product_flash_attention_backward_31 = (
+        torch.randn([1, 8192, 32, 128], dtype=torch.bfloat16, device='cuda').transpose(1, 2),
+        torch.randn([1, 8192, 8, 128], dtype=torch.bfloat16, device='cuda').transpose(1, 2),
+        torch.randn([1, 8192, 8, 128], dtype=torch.bfloat16, device='cuda').transpose(1, 2),
+    )
     clone_62 = torch.randn([1, 8192, 1, 64], dtype=torch.complex64, device='cuda')
     return [_scaled_dot_product_flash_attention_backward_31, clone_62]
 

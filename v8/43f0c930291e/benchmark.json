@@ -1,28 +1,40 @@
 {
-  "eager_ms": null,
+  "eager_ms": 0.18012287139892577,
   "kernelagent_triton": {
-    "status": "FAIL",
+    "status": "PASS",
     "tol_tier": "reduction",
-    "max_abs_err": 0.0,
-    "max_tol_units": 0.0,
-    "reason": "execution (trial 0): index 1 is out of bounds for dimension 0 with size 0"
+    "max_abs_err": 1.9814453125,
+    "max_tol_units": 0.5952380895614624,
+    "atol_eff": 0.05,
+    "rtol": 0.01,
+    "time_ms": 0.12968128204345702
   },
   "kernelagent_triton_opt": {
     "status": "SKIP",
     "reason": "no optimized_kernel.py"
   },
   "torch_compile": {
-    "status": "ERROR",
+    "status": "FAIL",
     "tol_tier": "reduction",
-    "max_abs_err": 0.0,
-    "max_tol_units": 0.0,
-    "reason": "execution (trial 0): index 1 is out of bounds for dimension 0 with size 0"
+    "max_abs_err": 2.0379638671875,
+    "max_tol_units": 19.757347106933594,
+    "note": "3 seeds; bitwise FAIL; memory PASS; numerical tolerance exceeded",
+    "time_ms": 0.08202495574951171
   },
   "torch_compile_max_autotune": {
-    "status": "ERROR",
+    "status": "FAIL",
     "tol_tier": "reduction",
+    "max_abs_err": 2.0379638671875,
+    "max_tol_units": 19.758487701416016,
+    "note": "3 seeds; bitwise FAIL; memory PASS; numerical tolerance exceeded",
+    "time_ms": 0.0711295986175537
+  },
+  "simple_prompt_kernel": {
+    "status": "PASS",
+    "tol_tier": "bitwise",
     "max_abs_err": 0.0,
     "max_tol_units": 0.0,
-    "reason": "execution (trial 0): index 1 is out of bounds for dimension 0 with size 0"
+    "note": "3 seeds; bitwise PASS; memory PASS; prior roofline: 55.5% of compulsory-traffic bandwidth bound; roofline incomplete",
+    "time_ms": 0.10463359832763672
   }
 }
